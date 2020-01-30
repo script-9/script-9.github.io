@@ -10,6 +10,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
+    "react-snap": "^1.23.0",
     "stylus": "^0.54.7"
   },
   "scripts": {
@@ -19,6 +20,7 @@
     "build-styl": "stylus src/styl/App.styl -o src/styl",
     "build-js": "react-scripts build",
     "build": "npm-run-all -s build-styl build-js",
+    "postbuild": "react-snap",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -36,5 +38,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "reactSnap": {}
 }

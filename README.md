@@ -7,4 +7,6 @@
 
 ## TODO
 
-- clean up `src`
+- learn what PWA means and how to enable it
+- deploy to gh-pages and see if https/2 is enabled there
+- try to get 100 lighthouse
