@@ -24,7 +24,7 @@
     "build": "npm-run-all -s build-styl build-js",
     "postbuild": "react-snap",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -b master -d build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
