@@ -12,7 +12,7 @@ const App = () => {
   // const { token } = loadState() || { token: process.env.REACT_APP_T }
   const token = process.env.REACT_APP_T
   const [gist, setGist] = useState(null)
-  const [cassette, setCassette] = useState(null)
+  const [cassette, setCassette] = useState({})
   const [isOnline, setIsOnline] = useState(true)
 
   useInterval(() => {
@@ -34,7 +34,7 @@ const App = () => {
       setCassette(cassette => {
         return gist
           ? { ...cassette, content: gist.files['cassette.json'].content }
-          : null
+          : {}
       })
       setGist(gist)
     },

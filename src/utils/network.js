@@ -54,7 +54,7 @@ const createGist = async ({ cassette, token }) => {
     description: 'SCRIPT-9',
     files: {
       'cassette.json': {
-        content: cassette,
+        content: cassette.content,
       },
     },
   }

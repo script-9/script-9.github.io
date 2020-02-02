@@ -5,7 +5,7 @@ const Output = props => {
   return (
     <div className="Output">
       <h1>Output</h1>
-      <pre>{(cassette && cassette.content) || null}</pre>
+      <pre>{cassette.content || null}</pre>
     </div>
   )
 }

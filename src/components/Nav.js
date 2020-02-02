@@ -56,9 +56,9 @@ const Nav = props => {
     }
   }, [])
 
-  const isNew = !cassette && !gist
+  const isNew = !cassette.content && !gist
   const isDirty =
-    cassette &&
+    cassette.content &&
     (!gist || gist.files['cassette.json'].content !== cassette.content)
 
   return (
