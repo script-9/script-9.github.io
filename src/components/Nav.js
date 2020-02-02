@@ -55,23 +55,14 @@ const Nav = props => {
     }
   }
 
-  const loadGist = gistId => {
-    window
-      .fetch(`https://api.github.com/gists/${gistId}`)
-      .then(
-        response => response.json(),
-        error =>
-          throwError({
-            error,
-            message: `Could not fetch gist.`,
-          }),
-      )
-      .then(json => {
-        setGist(json)
-      })
-      .catch(error => {
-        console.log({ error })
-      })
+  const loadGist = async gistId => {
+    const response = await fetch(`https://api.github.com/gists/${gistId}`)
+    if (response.status === 200) {
+      const json = await response.json()
+      setGist(json)
+    } else {
+      console.log(response.statusText)
+    }
   }
 
   useEffect(() => {
