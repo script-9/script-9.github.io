@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { navigate } from '@reach/router'
+import network from './../utils/network'
 import Nav from './Nav'
 
 const Shelf = props => {
@@ -15,14 +16,12 @@ const Shelf = props => {
   }, [])
 
   const loadGist = async gistId => {
-    const url = `https://api.github.com/gists/${gistId}`
-    const response = await fetch(url)
-    if (response.status === 200) {
-      const json = await response.json()
+    try {
+      const json = await network.fetchGist(gistId)
       setGist(json)
       navigate(`/code?id=${json.id}`)
-    } else {
-      console.log(response.statusText)
+    } catch (error) {
+      console.log(error)
     }
   }
 

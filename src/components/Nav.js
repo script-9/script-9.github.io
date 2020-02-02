@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 import { Link, navigate } from '@reach/router'
-import throwError from '../utils/throwError'
+import network from './../utils/network'
+import { saveState } from './../utils/localStorage'
 
 const Nav = props => {
-  const { gist, setGist, path, cassette, token } = props
+  const { gist, setGist, path, cassette, token, isOnline } = props
 
   const handleNew = () => {
     setGist(null)
@@ -11,57 +12,37 @@ const Nav = props => {
   }
 
   const handleSave = async () => {
-    const payload = {
-      public: true,
-      description: 'SCRIPT-9',
-      files: {
-        'cassette.json': {
-          content: cassette,
-        },
-      },
-    }
-    const options = {
-      headers: {
-        Authorization: `token ${token.value}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    }
-
     if (gist) {
-      const { id } = gist
-      const url = `https://api.github.com/gists/${id}`
-      options.method = 'PATCH'
-
-      const response = await fetch(url, options)
-      if (response.status === 200) {
-        const json = await response.json()
+      try {
+        const json = await network.editGist({ gist, cassette, token })
         setGist(json)
-      } else {
-        console.log(response.statusText)
-      }
+      } catch (error) {}
     } else {
-      const url = `https://api.github.com/gists`
-      options.method = 'POST'
-
-      const response = await fetch(url, options)
-      if (response.status === 201) {
-        const json = await response.json()
+      try {
+        const json = await network.createGist({ cassette, token })
         setGist(json)
         navigate(`${path}?id=${json.id}`)
-      } else {
-        console.log(response.statusText)
+      } catch (error) {
+        // If we got a TypeError,
+        if (error.name === 'TypeError') {
+          try {
+            await network.fetchFavicon()
+          } catch (error) {
+            // and trying to fetch favicon errors out,
+            // then we'll assume this happened because we were offline.
+            // Put the cassette in localStorage.
+          }
+        }
       }
     }
   }
 
   const loadGist = async gistId => {
-    const response = await fetch(`https://api.github.com/gists/${gistId}`)
-    if (response.status === 200) {
-      const json = await response.json()
+    try {
+      const json = await network.fetchGist(gistId)
       setGist(json)
-    } else {
-      console.log(response.statusText)
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -77,7 +58,8 @@ const Nav = props => {
 
   const isNew = !cassette && !gist
   const isDirty =
-    cassette && (!gist || gist.files['cassette.json'].content !== cassette)
+    cassette &&
+    (!gist || gist.files['cassette.json'].content !== cassette.content)
 
   return (
     <nav>
@@ -94,6 +76,7 @@ const Nav = props => {
           </li>
         </ul>
       </div>
+      {!isOnline && <div>OFFLINE</div>}
       <div className="buttons">
         <ul>
           <li>

@@ -3,19 +3,39 @@ import { Router } from '@reach/router'
 import Home from './components/Home'
 import Code from './components/Code'
 import Shelf from './components/Shelf'
-import { loadState } from './utils/localStorage'
-
+// import { loadState } from './utils/localStorage'
+import useInterval from './utils/useInterval'
 import './styl/App.css'
+import network from './utils/network'
 
 const App = () => {
-  const { token } = loadState()
+  // const { token } = loadState() || { token: process.env.REACT_APP_T }
+  const token = process.env.REACT_APP_T
   const [gist, setGist] = useState(null)
   const [cassette, setCassette] = useState(null)
+  const [isOnline, setIsOnline] = useState(true)
+
+  useInterval(() => {
+    network
+      .fetchFavicon()
+      .then(() => {
+        setIsOnline(true)
+      })
+      .catch(() => {
+        setIsOnline(false)
+      })
+  }, 30000)
+
   const props = {
     token,
+    isOnline,
     gist,
     setGist: gist => {
-      setCassette(gist ? gist.files['cassette.json'].content : null)
+      setCassette(cassette => {
+        return gist
+          ? { ...cassette, content: gist.files['cassette.json'].content }
+          : null
+      })
       setGist(gist)
     },
     cassette,

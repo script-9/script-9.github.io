@@ -4,14 +4,17 @@ const Editor = props => {
   const { cassette, setCassette } = props
 
   const handleTextareaChange = e => {
-    setCassette(e.target.value)
+    setCassette(cassette => ({
+      ...cassette,
+      content: e.target.value,
+    }))
   }
 
   return (
     <div className="Editor">
       <h1>Editor</h1>
       <textarea
-        value={cassette || ''}
+        value={(cassette && cassette.content) || ''}
         onChange={handleTextareaChange}
       ></textarea>
     </div>
