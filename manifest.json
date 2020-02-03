@@ -19,7 +19,6 @@
     }
   ],
   "start_url": "/",
-  "display": "minimal-ui",
   "background_color": "#21394e",
   "theme_color": "#21394e"
 }
