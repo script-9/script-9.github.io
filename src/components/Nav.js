@@ -7,7 +7,15 @@ import isCassetteDirty from './../utils/isCassetteDirty'
 import getIdbValues from './../utils/getIdbValues'
 
 const Nav = props => {
-  const { gist, path, cassette, setCassette, isOnline, setCovers } = props
+  const {
+    gist,
+    path,
+    cassette,
+    setCassette,
+    isOnline,
+    setCovers,
+    version,
+  } = props
   const [isDirty, setIsDirty] = useState(false)
 
   useEffect(() => {
@@ -63,6 +71,7 @@ const Nav = props => {
         </ul>
       </div>
       {!isOnline && <div>OFFLINE</div>}
+      {<div>v{version}</div>}
       <div className="buttons">
         <ul>
           <li>

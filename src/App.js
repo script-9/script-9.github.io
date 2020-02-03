@@ -6,6 +6,7 @@ import useInterval from './utils/useInterval'
 import getIdbValues from './utils/getIdbValues'
 import network from './utils/network'
 import './styl/App.css'
+import { version } from './../package.json'
 
 const App = () => {
   const token = process.env.REACT_APP_T
@@ -30,6 +31,7 @@ const App = () => {
   }, 5000 * 100)
 
   const props = {
+    version,
     token,
     isOnline,
     gist,
