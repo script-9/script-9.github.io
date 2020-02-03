@@ -1,9 +1,19 @@
 import React from 'react'
 import _ from 'lodash'
 import timeAgo from './../utils/timeAgo'
+import * as idb from 'idb-keyval'
+import { navigate } from '@reach/router'
 
-const Covers = ({ covers }) => {
+const Covers = props => {
+  const { covers, setCassette, cassette } = props
   const now = Date.now()
+
+  const handleLoad = async idbId => {
+    const value = await idb.get(idbId)
+    setCassette(value)
+    navigate(`/code`)
+  }
+
   return (
     <ul className="Covers">
       {_(covers)
@@ -15,6 +25,12 @@ const Covers = ({ covers }) => {
               <span className="time-ago">
                 {timeAgo({ now, before: cover.updatedAt })}
               </span>
+              <button
+                disabled={cassette && cover.idbId === cassette.idbId}
+                onClick={() => handleLoad(cover.idbId)}
+              >
+                Load
+              </button>
               <span>{cover.contents.code}</span>
             </div>
           </li>
@@ -25,13 +41,11 @@ const Covers = ({ covers }) => {
 }
 
 const Shelf = props => {
-  const { covers } = props
-
   return (
     <>
       <div className="Shelf">
         <h1>Shelf</h1>
-        <Covers covers={covers} />
+        <Covers {...props} />
       </div>
     </>
   )

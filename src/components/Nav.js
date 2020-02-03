@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Link, navigate } from '@reach/router'
+import { navigate } from '@reach/router'
+import { Link } from '@reach/router'
 import * as idb from 'idb-keyval'
 import uuid from './../utils/uuid'
 import isCassetteDirty from './../utils/isCassetteDirty'
@@ -10,16 +11,19 @@ const Nav = props => {
   const [isDirty, setIsDirty] = useState(false)
 
   useEffect(() => {
-    console.log('RUNNING isCassetteDirty')
-    isCassetteDirty(cassette).then(value => {
-      console.log(`FINISHED isCassetteDirty. Value: ${value}`)
-      setIsDirty(value)
-    })
+    if (cassette) {
+      navigate(`${path}?idbId=${cassette.idbId}`)
+    } else {
+      navigate(`${path}`)
+    }
+  }, [cassette, path])
+
+  useEffect(() => {
+    isCassetteDirty(cassette).then(setIsDirty)
   }, [cassette])
 
   const handleNew = () => {
     setCassette(null)
-    navigate(path)
   }
 
   const handleSave = async () => {
@@ -31,13 +35,20 @@ const Nav = props => {
 
     await idb.set(updatedCassette.idbId, updatedCassette)
     setCassette(updatedCassette)
+    const idbValues = await getIdbValues()
+    setCovers(idbValues)
+  }
 
+  const handleDelete = async () => {
+    await idb.del(cassette.idbId)
+    setCassette(null)
     const idbValues = await getIdbValues()
     setCovers(idbValues)
   }
 
   const isNew = !cassette || !cassette.contents.code
   const canSave = isDirty && cassette.contents.code
+  const canDelete = cassette
 
   return (
     <nav>
@@ -62,6 +73,11 @@ const Nav = props => {
           <li>
             <button disabled={!canSave} onClick={handleSave}>
               Save
+            </button>
+          </li>
+          <li>
+            <button disabled={!canDelete} onClick={handleDelete}>
+              Delete
             </button>
           </li>
         </ul>
