@@ -5,9 +5,11 @@ const Editor = props => {
 
   const handleTextareaChange = e => {
     e.persist()
-    setCassette(cassette => ({
+    setCassette((cassette = {}) => ({
       ...cassette,
-      content: e.target.value,
+      contents: {
+        code: e.target.value,
+      },
     }))
   }
 
@@ -15,7 +17,7 @@ const Editor = props => {
     <div className="Editor">
       <h1>Editor</h1>
       <textarea
-        value={cassette.content || ''}
+        value={(cassette && cassette.contents.code) || ''}
         onChange={handleTextareaChange}
       ></textarea>
     </div>

@@ -2,6 +2,7 @@ import React from 'react'
 import Editor from './Editor'
 import Output from './Output'
 import Nav from './Nav'
+import Shelf from './Shelf'
 
 const Code = props => {
   return (
@@ -11,6 +12,7 @@ const Code = props => {
         <h1>Code</h1>
         <Editor {...props} />
         <Output {...props} />
+        <Shelf {...props} />
       </div>
     </>
   )

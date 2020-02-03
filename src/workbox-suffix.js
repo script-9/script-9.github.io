@@ -14,7 +14,9 @@ workbox.routing.registerRoute(
       new workbox.backgroundSync.Plugin('SCRIPT-9-POST', {
         maxRetentionTime: 24 * 60,
         onSync: async ({ queue }) => {
+          const all = await queue.getAll()
           console.log(queue.getAll())
+          console.log({ all })
           await queue.replayRequests()
           console.log('DONE')
         },

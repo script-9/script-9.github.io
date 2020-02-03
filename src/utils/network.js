@@ -17,16 +17,21 @@ const fetchGist = async gistId => {
   }
 }
 
-const editGist = async ({ gist, cassette, token }) => {
-  const payload = {
-    public: true,
-    description: 'SCRIPT-9',
-    files: {
-      'cassette.json': {
-        content: cassette.content,
-      },
+const assembleGistPayload = cassette => ({
+  public: true,
+  description: 'SCRIPT-9',
+  files: {
+    'misc.json': {
+      idbId: cassette.idbId || null,
     },
-  }
+    'code.json': {
+      content: cassette.content,
+    },
+  },
+})
+
+const editGist = async ({ gist, cassette, token }) => {
+  const payload = assembleGistPayload(cassette)
   const options = {
     headers: {
       Authorization: `token ${token}`,
@@ -49,15 +54,7 @@ const editGist = async ({ gist, cassette, token }) => {
 }
 
 const createGist = async ({ cassette, token }) => {
-  const payload = {
-    public: true,
-    description: 'SCRIPT-9',
-    files: {
-      'cassette.json': {
-        content: cassette.content,
-      },
-    },
-  }
+  const payload = assembleGistPayload(cassette)
   const options = {
     headers: {
       Authorization: `token ${token}`,
