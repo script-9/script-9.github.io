@@ -28,7 +28,7 @@
     "build": "npm-run-all -s build-styl build-js workbox-suffix",
     "postbuild": "react-snap",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -b master -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
