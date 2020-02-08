@@ -3,8 +3,6 @@ import { Router } from '@reach/router'
 import Home from './components/Home'
 import Code from './components/Code'
 import Shelf from './components/Shelf'
-import useInterval from './utils/useInterval'
-import network from './utils/network'
 import { version } from './../package.json'
 import './styl/App.css'
 
