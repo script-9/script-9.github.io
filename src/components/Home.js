@@ -8,7 +8,7 @@ const Home = props => {
       <Nav {...props} />
       <div className="Home">
         <h1>Home</h1>
-        <Shelf {...props} />
+        {/* <Shelf {...props} /> */}
       </div>
     </>
   )

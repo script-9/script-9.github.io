@@ -4,19 +4,19 @@ import timeAgo from './../utils/timeAgo'
 import * as idb from 'idb-keyval'
 import { navigate } from '@reach/router'
 
-const Covers = props => {
-  const { covers, setCassette, cassette } = props
-  const now = Date.now()
+const OfflineCassettes = props => {
+  // const { covers, setCassette, cassette } = props
+  // const now = Date.now()
 
-  const handleLoad = async idbId => {
-    const value = await idb.get(idbId)
-    setCassette(value)
-    navigate(`/code`)
-  }
+  // const handleLoad = async idbId => {
+  //   const value = await idb.get(idbId)
+  //   setCassette(value)
+  //   navigate(`/code`)
+  // }
 
   return (
-    <ul className="Covers">
-      {_(covers)
+    <ul className="OfflineCassettes">
+      {/* {_(covers)
         .sortBy(['updatedAt'])
         .reverse()
         .map((cover, i) => (
@@ -35,7 +35,7 @@ const Covers = props => {
             </div>
           </li>
         ))
-        .value()}
+        .value()} */}
     </ul>
   )
 }
@@ -45,7 +45,7 @@ const Shelf = props => {
     <>
       <div className="Shelf">
         <h1>Shelf</h1>
-        <Covers {...props} />
+        <OfflineCassettes {...props} />
       </div>
     </>
   )

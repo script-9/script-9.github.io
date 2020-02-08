@@ -12,7 +12,7 @@ const Code = props => {
         <h1>Code</h1>
         <Editor {...props} />
         <Output {...props} />
-        <Shelf {...props} />
+        {/* <Shelf {...props} /> */}
       </div>
     </>
   )

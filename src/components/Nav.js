@@ -2,71 +2,97 @@ import React, { useEffect, useState } from 'react'
 import { navigate } from '@reach/router'
 import { Link } from '@reach/router'
 import * as idb from 'idb-keyval'
+import network from './../utils/network'
 import uuid from './../utils/uuid'
 import isCassetteDirty from './../utils/isCassetteDirty'
 import getIdbValues from './../utils/getIdbValues'
 
 const Nav = props => {
-  const {
-    gist,
-    path,
-    cassette,
-    setCassette,
-    isOnline,
-    setCovers,
-    version,
-  } = props
-  const [isDirty, setIsDirty] = useState(false)
+  const { token, path, cassette, setCassette, isOnline, version } = props
 
-  useEffect(() => {
-    if (cassette) {
-      navigate(`${path}?idbId=${cassette.idbId}`)
-    } else {
-      navigate(`${path}`)
-    }
-  }, [cassette, path])
+  // const [isDirty, setIsDirty] = useState(false)
 
-  useEffect(() => {
-    isCassetteDirty(cassette).then(setIsDirty)
-  }, [cassette])
+  // useEffect(() => {
+  //   if (cassette) {
+  //     navigate(`${path}?idbId=${cassette.idbId}`)
+  //   } else {
+  //     navigate(`${path}`)
+  //   }
+  // }, [cassette, path])
+
+  // useEffect(() => {
+  //   isCassetteDirty(cassette).then(setIsDirty)
+  // }, [cassette])
 
   const handleNew = () => {
-    setCassette(null)
+    // setCassette(null)
   }
 
-  const handleSave = async () => {
-    const updatedCassette = {
-      ...cassette,
-      updatedAt: Date.now(),
-      idbId: cassette.idbId || uuid(),
-    }
+  /*
+- On save, if save fails and then we check we're offline:
+  - put cassette in idb
+  - give cassette an idbId
+  - remove from URL
+  - remove the gist part, but keep gistId
+- On save, if save goes through:
+  - remove cassette from idb
+  - remove its idbId
+0  - set id on URL
+  - set gistId
+*/
+  /*
+  - save new, isOnline:
+    gist ADD
+  - save new, isOffline:
+    idbId ADD
+  - save local, isOffline:
+    idbId KEEP
+  - save local, isOnline:
+    idbId DELETE
+    gist ADD
+  - save remote, isOffline:
+    idbId ADD
+    gistId ADD
+    gist DELETE
+  */
 
-    await idb.set(updatedCassette.idbId, updatedCassette)
-    setCassette(updatedCassette)
-    const idbValues = await getIdbValues()
-    setCovers(idbValues)
+  const handleSave = async () => {
+    try {
+      const response = network.saveGist({ cassette, token })
+    } catch (error) {}
+    // const updatedCassette = {
+    //   ...cassette,
+    //   updatedAt: Date.now(),
+    //   idbId: cassette.idbId || uuid(),
+    // }
+    // await idb.set(updatedCassette.idbId, updatedCassette)
+    // setCassette(updatedCassette)
+    // const idbValues = await getIdbValues()
+    // setCovers(idbValues)
   }
 
   const handleDelete = async () => {
-    await idb.del(cassette.idbId)
-    setCassette(null)
-    const idbValues = await getIdbValues()
-    setCovers(idbValues)
+    // await idb.del(cassette.idbId)
+    // setCassette(null)
+    // const idbValues = await getIdbValues()
+    // setCovers(idbValues)
   }
 
-  const isNew = !cassette || !cassette.contents.code
-  const canSave = isDirty && cassette.contents.code
-  const canDelete = cassette
+  // const isNew = !cassette || !cassette.contents.code
+  // const canSave = isDirty && cassette.contents.code
+  // const canDelete = cassette
 
   return (
     <nav>
       <div className="pages">
         <ul>
           <li>
-            <Link to={gist ? `/?id=${gist.id}` : '/'}>Home</Link>
+            {/* <Link to={gist ? `/?id=${gist.id}` : '/'}>Home</Link> */}
+            <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to={gist ? `/code?id=${gist.id}` : '/code'}>Code</Link>
+            <Link to="/code">Code</Link>
+            {/* <Link to={gist ? `/code?id=${gist.id}` : '/code'}>Code</Link> */}
           </li>
         </ul>
       </div>
@@ -75,19 +101,13 @@ const Nav = props => {
       <div className="buttons">
         <ul>
           <li>
-            <button disabled={isNew} onClick={handleNew}>
-              New
-            </button>
+            <button onClick={handleNew}>New</button>
           </li>
           <li>
-            <button disabled={!canSave} onClick={handleSave}>
-              Save
-            </button>
+            <button onClick={handleSave}>Save</button>
           </li>
           <li>
-            <button disabled={!canDelete} onClick={handleDelete}>
-              Delete
-            </button>
+            <button onClick={handleDelete}>Delete</button>
           </li>
         </ul>
       </div>
