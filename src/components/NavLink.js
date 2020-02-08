@@ -4,9 +4,12 @@ import { Link } from '@reach/router'
 const NavLink = props => (
   <Link
     {...props}
-    getProps={({ location, href }) =>
-      location.href.includes(href) ? { className: 'active' } : null
-    }
+    getProps={({ location, href }) => {
+      const { origin, pathname, search } = location
+      return [origin, pathname, search].join('').endsWith(href)
+        ? { className: 'active' }
+        : null
+    }}
   />
 )
 

@@ -114,6 +114,17 @@ const Nav = props => {
               Code
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              to={
+                cassette && cassette.gist
+                  ? `/shelf?id=${cassette.gist.id}`
+                  : '/shelf'
+              }
+            >
+              Shelf
+            </NavLink>
+          </li>
         </ul>
       </div>
       {!isOnline && <div>OFFLINE</div>}
@@ -141,51 +152,3 @@ const Nav = props => {
 }
 
 export default Nav
-
-// if (!cassette.uuid) {
-// setCassette((cassette = {}) => ({
-//   ...cassette,
-//   uuid: uuid(),
-// }))
-// }
-// const _handleSave = async () => {
-// if (gist) {
-//   try {
-//     const json = await network.editGist({ gist, cassette, token })
-//     setGist(json)
-//   } catch (error) {}
-// } else {
-//   try {
-//     const json = await network.createGist({ cassette, token })
-//     setGist(json)
-//     navigate(`${path}?id=${json.id}`)
-//   } catch (error) {
-//     // If we got a TypeError,
-//     if (error.name === 'TypeError') {
-//       try {
-//         // and trying to fetch favicon errors out,
-//         await network.fetchFavicon()
-//       } catch (error) {
-//         // then we'll assume this happened because we were offline.
-//         const newCassette = {
-//           ...cassette,
-//           idbId: uuid(),
-//         }
-//         setCassette(newCassette)
-//         // Put the cassette in idb.
-//         try {
-//           await idb.set(newCassette.idbId, newCassette)
-//         } catch (error) {
-//           console.error(error)
-//         }
-//       }
-//     }
-//   }
-// }
-// }
-
-// {
-//   /* <li>
-// <Link to={gist ? `/shelf?id=${gist.id}` : '/shelf'}>Shelf</Link>
-// </li> */
-// }

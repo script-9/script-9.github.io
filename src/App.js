@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Router } from '@reach/router'
 import Home from './components/Home'
 import Code from './components/Code'
+import Shelf from './components/Shelf'
 import useInterval from './utils/useInterval'
 import network from './utils/network'
 import { version } from './../package.json'
@@ -11,7 +12,6 @@ const App = () => {
   const token = process.env.REACT_APP_TOKEN
   const [cassette, setCassette] = useState(null)
   const [isOnline, setIsOnline] = useState(true)
-  const [offlineCassettes, setOfflineCassettes] = useState([])
 
   useInterval(() => {
     network
@@ -30,14 +30,13 @@ const App = () => {
     isOnline,
     cassette,
     setCassette,
-    offlineCassettes,
-    setOfflineCassettes,
   }
   return (
     <div className="App">
       <Router>
         <Home path="/" {...props} />
         <Code path="/code" {...props} />
+        <Shelf path="/shelf" {...props} />
       </Router>
     </div>
   )
