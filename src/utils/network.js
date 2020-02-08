@@ -10,7 +10,7 @@ const assembleGistPayload = cassette => ({
 
 const fetchFavicon = async () => {
   try {
-    const response = fetch('/img/favicon.co')
+    const response = await fetch('/img/favicon.co')
     if (!response.ok) {
       throw new Error(response.statusText)
     }

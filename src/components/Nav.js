@@ -7,15 +7,7 @@ import uuid from './../utils/uuid'
 import isCassetteDirty from './../utils/isCassetteDirty'
 
 const Nav = props => {
-  const {
-    token,
-    path,
-    location,
-    cassette,
-    setCassette,
-    isOnline,
-    version,
-  } = props
+  const { token, path, location, cassette, setCassette, version } = props
   const [isDirty, setIsDirty] = useState(false)
 
   useEffect(() => {
@@ -127,7 +119,6 @@ const Nav = props => {
           </li>
         </ul>
       </div>
-      {!isOnline && <div>OFFLINE</div>}
       {<div>v{version}</div>}
       <div className="buttons">
         <ul>

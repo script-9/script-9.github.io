@@ -11,23 +11,10 @@ import './styl/App.css'
 const App = () => {
   const token = process.env.REACT_APP_TOKEN
   const [cassette, setCassette] = useState(null)
-  const [isOnline, setIsOnline] = useState(true)
-
-  useInterval(() => {
-    network
-      .fetchFavicon()
-      .then(() => {
-        setIsOnline(true)
-      })
-      .catch(() => {
-        setIsOnline(false)
-      })
-  }, 5000 * 100)
 
   const props = {
     version,
     token,
-    isOnline,
     cassette,
     setCassette,
   }
