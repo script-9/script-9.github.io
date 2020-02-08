@@ -82,7 +82,7 @@ const Nav = props => {
   }
 
   const isNew = !cassette || !(cassette.contents && cassette.contents.code)
-  const canSave = !isNew && isDirty
+  const canSave = (!isNew && isDirty) || (!isNew && cassette.idbId)
 
   return (
     <nav>
