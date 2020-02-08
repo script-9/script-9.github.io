@@ -1,98 +1,118 @@
 import React, { useEffect, useState } from 'react'
 import { navigate } from '@reach/router'
-import { Link } from '@reach/router'
 import * as idb from 'idb-keyval'
+import NavLink from './NavLink'
 import network from './../utils/network'
 import uuid from './../utils/uuid'
 import isCassetteDirty from './../utils/isCassetteDirty'
-import getIdbValues from './../utils/getIdbValues'
 
 const Nav = props => {
-  const { token, path, cassette, setCassette, isOnline, version } = props
+  const {
+    token,
+    path,
+    location,
+    cassette,
+    setCassette,
+    isOnline,
+    version,
+  } = props
+  const [isDirty, setIsDirty] = useState(false)
 
-  // const [isDirty, setIsDirty] = useState(false)
+  useEffect(() => {
+    const { search } = location
+    const params = new window.URLSearchParams(search)
+    const id = params.get('id')
+    if (!(cassette && cassette.gist) && id) {
+      network
+        .fetchGist(id)
+        .then(gist => {
+          setCassette((cassette = {}) => ({
+            ...cassette,
+            gist,
+            contents: {
+              ...(cassette ? cassette.contents : {}),
+              code: gist.files['code.json'].content,
+            },
+          }))
+        })
+        .catch(error => {
+          console.log({ error })
+        })
+    }
+  }, [cassette, setCassette, location])
 
-  // useEffect(() => {
-  //   if (cassette) {
-  //     navigate(`${path}?idbId=${cassette.idbId}`)
-  //   } else {
-  //     navigate(`${path}`)
-  //   }
-  // }, [cassette, path])
+  useEffect(() => {
+    if (cassette && cassette.gist) {
+      navigate(`${path}?id=${cassette.gist.id}`)
+    } else {
+      navigate(`${path}`)
+    }
+  }, [cassette, path])
 
-  // useEffect(() => {
-  //   isCassetteDirty(cassette).then(setIsDirty)
-  // }, [cassette])
+  useEffect(() => {
+    isCassetteDirty(cassette).then(setIsDirty)
+  }, [cassette])
 
   const handleNew = () => {
-    // setCassette(null)
+    setCassette(null)
   }
-
-  /*
-- On save, if save fails and then we check we're offline:
-  - put cassette in idb
-  - give cassette an idbId
-  - remove from URL
-  - remove the gist part, but keep gistId
-- On save, if save goes through:
-  - remove cassette from idb
-  - remove its idbId
-0  - set id on URL
-  - set gistId
-*/
-  /*
-  - save new, isOnline:
-    gist ADD
-  - save new, isOffline:
-    idbId ADD
-  - save local, isOffline:
-    idbId KEEP
-  - save local, isOnline:
-    idbId DELETE
-    gist ADD
-  - save remote, isOffline:
-    idbId ADD
-    gistId ADD
-    gist DELETE
-  */
 
   const handleSave = async () => {
     try {
-      const response = network.saveGist({ cassette, token })
-    } catch (error) {}
-    // const updatedCassette = {
-    //   ...cassette,
-    //   updatedAt: Date.now(),
-    //   idbId: cassette.idbId || uuid(),
-    // }
-    // await idb.set(updatedCassette.idbId, updatedCassette)
-    // setCassette(updatedCassette)
-    // const idbValues = await getIdbValues()
-    // setCovers(idbValues)
+      // If save goes through:
+      // - remove cassette from idb
+      // - remove its idbId
+      const gist = await network.saveGist({ cassette, token })
+      if (cassette.idbId) {
+        await idb.del(cassette.idbId)
+      }
+      const updatedCassette = {
+        ...cassette,
+        gist,
+        idbId: null,
+      }
+      setCassette(updatedCassette)
+    } catch (error) {
+      // If save fails:
+      // - give cassette an idbId
+      // - remove the gist part, but keep gistId
+      // - put cassette in idb
+      const updatedCassette = {
+        ...cassette,
+        idbUpdatedAt: Date.now(),
+        idbId: cassette.idbId || uuid(),
+        gist: null,
+        gistId: (cassette.gist && cassette.gist.id) || null,
+      }
+      await idb.set(updatedCassette.idbId, updatedCassette)
+      setCassette(updatedCassette)
+    }
   }
 
-  const handleDelete = async () => {
-    // await idb.del(cassette.idbId)
-    // setCassette(null)
-    // const idbValues = await getIdbValues()
-    // setCovers(idbValues)
-  }
-
-  // const isNew = !cassette || !cassette.contents.code
-  // const canSave = isDirty && cassette.contents.code
-  // const canDelete = cassette
+  const isNew = !cassette || !(cassette.contents && cassette.contents.code)
+  const canSave = !isNew && isDirty
 
   return (
     <nav>
       <div className="pages">
         <ul>
           <li>
-            {/* <Link to={gist ? `/?id=${gist.id}` : '/'}>Home</Link> */}
-            <Link to="/">Home</Link>
+            <NavLink
+              to={cassette && cassette.gist ? `/?id=${cassette.gist.id}` : '/'}
+            >
+              Home
+            </NavLink>
           </li>
           <li>
-            <Link to="/code">Code</Link>
-            {/* <Link to={gist ? `/code?id=${gist.id}` : '/code'}>Code</Link> */}
+            <NavLink
+              to={
+                cassette && cassette.gist
+                  ? `/code?id=${cassette.gist.id}`
+                  : '/code'
+              }
+            >
+              Code
+            </NavLink>
           </li>
         </ul>
       </div>
@@ -100,15 +120,20 @@ const Nav = props => {
       {<div>v{version}</div>}
       <div className="buttons">
         <ul>
+          {isDirty && <li>*</li>}
           <li>
-            <button onClick={handleNew}>New</button>
+            <button disabled={isNew} onClick={handleNew}>
+              New
+            </button>
           </li>
           <li>
-            <button onClick={handleSave}>Save</button>
+            <button disabled={!canSave} onClick={handleSave}>
+              Save
+            </button>
           </li>
-          <li>
+          {/* <li>
             <button onClick={handleDelete}>Delete</button>
-          </li>
+          </li> */}
         </ul>
       </div>
     </nav>
@@ -159,24 +184,6 @@ export default Nav
 // }
 // }
 
-// const loadGist = async gistId => {
-//   try {
-//     const json = await network.fetchGist(gistId)
-//     setGist(json)
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
-
-// useEffect(() => {
-//   const { search } = window.location
-//   const params = new window.URLSearchParams(search)
-//   const id = params.get('id')
-//   if (!gist && id) {
-//     console.log('fetching id')
-//     loadGist(id)
-//   }
-// }, [])
 // {
 //   /* <li>
 // <Link to={gist ? `/shelf?id=${gist.id}` : '/shelf'}>Shelf</Link>

@@ -44,12 +44,3 @@ const App = () => {
 }
 
 export default App
-// const { token } = loadState() || { token: process.env.REACT_APP_T }
-// setGist: gist => {
-// setCassette(cassette => {
-//   return gist
-//     ? { ...cassette, content: gist.files['code.json'].content }
-//     : {}
-// })
-// setGist(gist)
-// },

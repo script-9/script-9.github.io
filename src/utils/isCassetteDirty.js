@@ -8,9 +8,13 @@ const isCassetteDirty = async cassette => {
       const idbCassette = await idb.get(cassette.idbId)
       const isDirty = cassette.contents.code !== idbCassette.contents.code
       return isDirty
-    } else {
-      const isDirty = !!cassette.contents.code
+    } else if (cassette.gist) {
+      const isDirty =
+        cassette.contents &&
+        cassette.contents.code !== cassette.gist.files['code.json'].content
       return isDirty
+    } else {
+      return !!cassette.contents.code
     }
   }
 }
