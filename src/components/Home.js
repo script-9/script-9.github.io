@@ -22,65 +22,122 @@ const Home = props => {
           <span>updated 23:31 01/28/20</span>
           <span>v0.1.280</span>
         </div>
-        <section class="intro">
-          <p>
-            SCRIPT-8 is a fantasy computer for making, sharing, and playing tiny
-            retro-looking games (called cassettes). It's free, browser-based,
-            and{' '}
-            <a href="https://github.com/script-8/script-8.github.io">
-              open-source
-            </a>
-            . Cassettes are written in JavaScript.
-          </p>
-          <div class="thumbnails">
-            <img src={loshermanosbrosgif} alt="Los hermanos bros" />
-            <img src={breakoutgif} alt="break-8 game" />
-            <img src={brospipegif} alt="the plumber" />
-            <img src={breakoutgif} alt="break-8 game" />
-            <img src={loshermanosbrosgif} alt="Los hermanos bros" />
-            <img src={breakoutgif} alt="break-8 game" />
-          </div>
-        </section>
-        <section>
+        <p>
+          SCRIPT-8 is a fantasy computer for making, sharing, and playing tiny
+          retro-looking games (called cassettes). It's free, browser-based, and{' '}
+          <a href="https://github.com/script-8/script-8.github.io">
+            open-source
+          </a>
+          . Cassettes are written in JavaScript.
+        </p>
+        <p class="thumbnails">
+          <img src={loshermanosbrosgif} alt="Los hermanos bros" />
+          <img src={breakoutgif} alt="break-8 game" />
+          <img src={brospipegif} alt="the plumber" />
+          <img src={breakoutgif} alt="break-8 game" />
+          <img src={loshermanosbrosgif} alt="Los hermanos bros" />
+          <img src={breakoutgif} alt="break-8 game" />
+        </p>
+        <p>
           SCRIPT-8 is designed to encourage play — the kind of wonder-filled
           play children experience as they explore and learn about the world. In
           order to support this goal, everything in SCRIPT-8 has immediate
           feedback. It is what some call a "livecoding" environment.
-        </section>
-        <section>It features:</section>
-        <section className="feature">
-          <p>a code editor where the game changes as you type.</p>
+        </p>
+        <p>It features:</p>
+        <p className="feature">
+          <span>a code editor where the game changes as you type.</span>
           <img src={livecoding480} alt="livecoding" />
-        </section>
-        <section className="feature">
-          <p>a slider to help you tweak numbers without typing.</p>
+        </p>
+        <p className="feature">
+          <span>a slider to help you tweak numbers without typing.</span>
           <img src={slider480} alt="slider" />
-        </section>
-        <section className="feature">
-          <p>a time-traveling tool so you can pause and rewind.</p>
+        </p>
+        <p className="feature">
+          <span>a time-traveling tool so you can pause and rewind.</span>
           <img src={pauserewind} alt="pause and rewind" />
-        </section>
-        <section className="feature">
-          <p>buttons that show a character's past and future paths.</p>
+        </p>
+        <p className="feature">
+          <span>buttons that show a character's past and future paths.</span>
           <img src={toggle} alt="toggle" />
-        </section>
-        <section className="feature">
-          <p> a sprite editor where the game instantly displays your edits.</p>
+        </p>
+        <p className="feature">
+          <span>
+            a sprite editor where the game instantly displays your edits.
+          </span>
           <img src={spritedemo} alt="sprite demo" />
-        </section>
-        <section className="feature">
-          <p>
+        </p>
+        <p className="feature">
+          <span>
             a map editor where changes alter the game's behavior, in real-time.
-          </p>
+          </span>
           <img src={mapdemo} alt="map demo" />
-        </section>
-        <section className="feature">
-          <p>
+        </p>
+        <p className="feature">
+          <span>
             a music editor where you create phrases, group them into chains, and
             turn those into songs.
-          </p>
+          </span>
           <img src={musicdemo} alt="music demo" />
-        </section>
+        </p>
+        <p>Each cassette is recorded to a URL you can share with anyone.</p>
+        <p>Play cassettes with a keyboard or gamepad.</p>
+        <p>
+          You can inspect any cassette's contents (even if it's not yours),
+          change the code, art, or music, and record it to a different cassette
+          — a new version.
+        </p>
+        <p>
+          SCRIPT-8 is heavily influenced by Bret Victor's ideas (specifically{' '}
+          <a href="http://vimeo.com/36579366">Inventing on principle</a> and{' '}
+          <a
+            className="text"
+            href="http://worrydream.com/LearnableProgramming/"
+          >
+            Learnable programming
+          </a>
+          ) and Joseph White's{' '}
+          <a href="https://www.lexaloffle.com/pico-8.php">PICO-8</a>, the best
+          of all fantasy consoles.
+        </p>
+        <p>
+          SCRIPT-8 is written by Gabriel Florit (that's me!) and{' '}
+          <a
+            className="text"
+            href="https://github.com/script-8/script-8.github.io/graphs/contributors"
+          >
+            dedicated contributors
+          </a>
+          . Click <a href="https://twitter.com/gabrielflorit">here</a> to follow
+          me on twitter. And visit the Github repository{' '}
+          <a
+            className="text"
+            href="https://github.com/script-8/script-8.github.io"
+          >
+            here
+          </a>
+          , where you can keep up with new features and the occasional bug fix.
+        </p>
+        <p>
+          If you have any questions, come join us on the{' '}
+          <a href="https://discord.gg/HA68FNX">
+            Fantasy Consoles Discord server
+          </a>
+          , a friendly place to chat about these sophisticated, cutting-edge
+          computers. The server has a dedicated SCRIPT-8 room.
+        </p>
+        <p>
+          SCRIPT-8 nyx8 palette by{' '}
+          <a href="https://twitter.com/Xavier_Gd">Javier Guerrero</a>. Sprites
+          in{' '}
+          <a
+            className="text"
+            href="https://script-8.github.io/?id=cd8d6811adb3afb472aaf7505729cf01"
+          >
+            Los Hermanos Bros.
+          </a>{' '}
+          by <a href="https://twitter.com/johanvinet">Johan Vinet</a>.
+        </p>
       </div>
     </>
   )
