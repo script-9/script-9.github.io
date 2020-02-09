@@ -117,6 +117,13 @@ const Nav = props => {
               Shelf
             </NavLink>
           </li>
+          <li>
+            <a
+              href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_GITHUB_APP_REDIRECT}`}
+            >
+              comments-login
+            </a>
+          </li>
         </ul>
       </div>
       {<div>v{version}</div>}

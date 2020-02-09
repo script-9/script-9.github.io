@@ -6,5 +6,9 @@
 
 ## TODO
 
-- Figure out if GitHub App will let us not request public scope
 - Tell user about every interaction
+
+## REPLACE
+
+- public/index.html: meta content
+- public/index.html: title

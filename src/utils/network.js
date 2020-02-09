@@ -1,3 +1,23 @@
+const fetchGithubAppAccessToken = async code => {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_NOW}/api/oauth-comments`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ code }),
+      },
+    )
+    if (response.status === 200) {
+      const json = await response.json()
+      return json
+    } else {
+      throw new Error(`${response.status}: ${response.statusText}`)
+    }
+  } catch (error) {
+    throw error
+  }
+}
+
 const assembleGistPayload = cassette => ({
   public: true,
   description: 'SCRIPT-9',
@@ -80,4 +100,4 @@ const saveGist = async ({ cassette, token }) => {
   }
 }
 
-export default { fetchGist, saveGist, fetchFavicon }
+export default { fetchGist, saveGist, fetchFavicon, fetchGithubAppAccessToken }
