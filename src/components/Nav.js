@@ -118,9 +118,7 @@ const Nav = props => {
             </NavLink>
           </li>
           <li>
-            <a
-              href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_GITHUB_APP_REDIRECT}`}
-            >
+            <a href={`${process.env.REACT_APP_NOW}/api/oauth-authorize`}>
               comments-login
             </a>
           </li>
