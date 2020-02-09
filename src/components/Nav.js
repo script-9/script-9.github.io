@@ -92,7 +92,7 @@ const Nav = props => {
             <NavLink
               to={cassette && cassette.gist ? `/?id=${cassette.gist.id}` : '/'}
             >
-              Home
+              SCRIPT-8
             </NavLink>
           </li>
           <li>
@@ -117,15 +117,15 @@ const Nav = props => {
               Shelf
             </NavLink>
           </li>
-          <li>
+          {/* <li>
             <a href={`${process.env.REACT_APP_NOW}/api/oauth-authorize`}>
               comments-login
             </a>
-          </li>
+          </li> */}
         </ul>
       </div>
-      {<div>v{version}</div>}
-      <div className="buttons">
+      {/* {<div>v{version}</div>} */}
+      {/* <div className="buttons">
         <ul>
           {isDirty && <li>*</li>}
           <li>
@@ -138,11 +138,8 @@ const Nav = props => {
               Save
             </button>
           </li>
-          {/* <li>
-            <button onClick={handleDelete}>Delete</button>
-          </li> */}
         </ul>
-      </div>
+      </div> */}
     </nav>
   )
 }

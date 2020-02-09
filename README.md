@@ -4,10 +4,6 @@
 - 2. PWA
 - 3. user should be 100% aware of every network interaction
 
-## TODO
-
-- Tell user about every interaction
-
 ## REPLACE
 
 - public/index.html: meta content
