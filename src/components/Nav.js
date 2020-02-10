@@ -95,7 +95,7 @@ const Nav = props => {
               SCRIPT-8
             </NavLink>
           </li>
-          <li>
+          {/* <li>
             <NavLink
               to={
                 cassette && cassette.gist
@@ -116,7 +116,7 @@ const Nav = props => {
             >
               Shelf
             </NavLink>
-          </li>
+          </li> */}
           {/* <li>
             <a href={`${process.env.REACT_APP_NOW}/api/oauth-authorize`}>
               comments-login

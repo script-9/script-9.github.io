@@ -13,6 +13,7 @@ import mapdemo from '../images/mapdemo.gif'
 import musicdemo from '../images/musicdemo.gif'
 
 const Home = props => {
+  const { version } = props
   return (
     <>
       <Nav {...props} />
@@ -20,8 +21,13 @@ const Home = props => {
         <div className="logo-and-timestamp">
           <img src={logo} alt="SCRIPT-8 logo" />
           <span>updated 23:31 01/28/20</span>
-          <span>v0.1.280</span>
+          <span>v{version}</span>
         </div>
+        <p>
+          (NOTICE: You're looking at the beta version. This is where I test new
+          features. Go <a href="https://script-8.github.io">here</a> for the
+          full experience.)
+        </p>
         <p>
           SCRIPT-8 is a fantasy computer for making, sharing, and playing tiny
           retro-looking games (called cassettes). It's free, browser-based, and{' '}
