@@ -16,7 +16,8 @@
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
     "react-snap": "^1.23.0",
-    "stylus": "^0.54.7"
+    "stylus": "^0.54.7",
+    "workerize-loader": "^1.1.0"
   },
   "scripts": {
     "watch-styl": "stylus src/styl/App.styl -o src/styl -w",

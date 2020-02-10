@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Nav from './Nav'
 import logo from '../images/logo.png'
 import tanksgif from '../images/tanks.gif'
@@ -15,8 +15,24 @@ import spritedemo from '../images/spritedemo.gif'
 import mapdemo from '../images/mapdemo.gif'
 import musicdemo from '../images/musicdemo.gif'
 
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import worker from 'workerize-loader!../workers/worker'
+
 const Home = props => {
   const { version, timestamp } = props
+
+  useEffect(() => {
+    let instance = worker() // `new` is optional
+
+    instance.hello().then(value => {
+      console.log({ value })
+    })
+
+    // instance.expensive(1000).then(count => {
+    //   console.log(`Ran ${count} loops`)
+    // })
+  }, [])
+
   return (
     <>
       <Nav {...props} />
@@ -40,7 +56,7 @@ const Home = props => {
           </a>
           . Cassettes are written in JavaScript.
         </p>
-        <p class="thumbnails">
+        <p className="thumbnails">
           <img src={loshermanosbrosgif} alt="Los hermanos bros game gif" />
           <img src={bombgif} alt="8-bomb game gif" />
           <img src={dungeongif} alt="dungeon game gif" />
