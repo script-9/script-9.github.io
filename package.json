@@ -1,6 +1,6 @@
 {
   "name": "script-9.github.io",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "homepage": "https://script-9.github.io",
   "dependencies": {
     "@reach/router": "^1.2.1",
@@ -31,7 +31,7 @@
     "deploy": "gh-pages -b master -d build",
     "test": "react-scripts test",
     "timestamp": "date '+ {\"timestamp\":\"%H:%M %m/%d/%y\"}' > src/utils/timestamp.json; git commit -m 'timestamp' src/utils/timestamp.json",
-    "version": "npm run timestamp; yarn version --patch; git push --follow-tags",
+    "sversion": "npm run timestamp; yarn version --patch; git push --follow-tags",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
