@@ -31,7 +31,7 @@
     "deploy": "gh-pages -b master -d build",
     "test": "react-scripts test",
     "timestamp": "date '+ {\"timestamp\":\"%H:%M %m/%d/%y\"}' > src/utils/timestamp.json; git commit -m 'timestamp' src/utils/timestamp.json",
-    "sversion": "npm run timestamp; yarn version --patch; git push --follow-tags",
+    "version": "npm run timestamp; npm version patch; git push --follow-tags",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
