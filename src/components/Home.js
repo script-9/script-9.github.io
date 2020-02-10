@@ -1,9 +1,12 @@
 import React from 'react'
 import Nav from './Nav'
 import logo from '../images/logo.png'
+import tanksgif from '../images/tanks.gif'
+import bombgif from '../images/8bomb.gif'
+import dungeongif from '../images/dungeon.gif'
+import porklikegif from '../images/porklike.gif'
+import suppliesgif from '../images/supplies.gif'
 import loshermanosbrosgif from '../images/loshermanosbros-lite.gif'
-import breakoutgif from '../images/breakout-lite.gif'
-import brospipegif from '../images/brospipe-lite.gif'
 import livecoding480 from '../images/livecoding480.gif'
 import slider480 from '../images/slider480.gif'
 import pauserewind from '../images/pauserewind.gif'
@@ -38,12 +41,12 @@ const Home = props => {
           . Cassettes are written in JavaScript.
         </p>
         <p class="thumbnails">
-          <img src={loshermanosbrosgif} alt="Los hermanos bros" />
-          <img src={breakoutgif} alt="break-8 game" />
-          <img src={brospipegif} alt="the plumber" />
-          <img src={breakoutgif} alt="break-8 game" />
-          <img src={loshermanosbrosgif} alt="Los hermanos bros" />
-          <img src={breakoutgif} alt="break-8 game" />
+          <img src={loshermanosbrosgif} alt="Los hermanos bros game gif" />
+          <img src={bombgif} alt="8-bomb game gif" />
+          <img src={dungeongif} alt="dungeon game gif" />
+          <img src={tanksgif} alt="tanks game gif" />
+          <img src={suppliesgif} alt="supplies game gif" />
+          <img src={porklikegif} alt="porklike game gif" />
         </p>
         <p>
           SCRIPT-8 is designed to encourage play — the kind of wonder-filled
