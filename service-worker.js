@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.62aef682a6b23fb0d27b558560eb9389.js"
+  "/precache-manifest.e7dd1b349ca17773a03a07577ab53d7c.js"
 );
 
 self.addEventListener('message', (event) => {
@@ -40,29 +40,7 @@ workbox.routing.registerNavigationRoute(workbox.precaching.getCacheKeyForURL("/i
 workbox.routing.registerRoute(
   new RegExp('https://api\\.github\\.com.*'),
   new workbox.strategies.NetworkFirst({
-    networkTimeoutSeconds: 5,
+    networkTimeoutSeconds: 10,
   }),
   'GET',
 )
-
-workbox.routing.registerRoute(
-  new RegExp('https://api\\.github\\.com.*'),
-  new workbox.strategies.NetworkOnly({
-    networkTimeoutSeconds: 5,
-    plugins: [
-      new workbox.backgroundSync.Plugin('SCRIPT-9-POST', {
-        maxRetentionTime: 24 * 60,
-        onSync: async ({ queue }) => {
-          const all = await queue.getAll()
-          console.log(queue.getAll())
-          console.log({ all })
-          await queue.replayRequests()
-          console.log('DONE')
-        },
-      }),
-    ],
-  }),
-  'POST',
-)
-
-// TODO: what about PATCH?
