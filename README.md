@@ -1,3 +1,8 @@
+## DEPLOY
+
+- npm run push-version
+- npm run deploy
+
 ## GOALS
 
 - 1. 100% lighthouse score

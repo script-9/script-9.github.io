@@ -13,20 +13,21 @@ import mapdemo from '../images/mapdemo.gif'
 import musicdemo from '../images/musicdemo.gif'
 
 const Home = props => {
-  const { version } = props
+  const { version, timestamp } = props
   return (
     <>
       <Nav {...props} />
       <div className="Home">
+        <h1>SCRIPT-8</h1>
         <div className="logo-and-timestamp">
           <img src={logo} alt="SCRIPT-8 logo" />
-          <span>updated 23:31 01/28/20</span>
+          <span>updated {timestamp}</span>
           <span>v{version}</span>
         </div>
         <p>
           (NOTICE: You're looking at the beta version. This is where I test new
-          features. Go <a href="https://script-8.github.io">here</a> for the
-          full experience.)
+          features. Go to <a href="https://script-8.github.io">SCRIPT-8</a> for
+          the full experience.)
         </p>
         <p>
           SCRIPT-8 is a fantasy computer for making, sharing, and playing tiny
@@ -114,13 +115,16 @@ const Home = props => {
           >
             dedicated contributors
           </a>
-          . Click <a href="https://twitter.com/gabrielflorit">here</a> to follow
-          me on twitter. And visit the Github repository{' '}
+          . Click{' '}
+          <a href="https://twitter.com/gabrielflorit">
+            https://twitter.com/gabrielflorit
+          </a>{' '}
+          to follow me on twitter. And visit the Github repository,{' '}
           <a
             className="text"
             href="https://github.com/script-8/script-8.github.io"
           >
-            here
+            https://github.com/script-8/script-8.github.io
           </a>
           , where you can keep up with new features and the occasional bug fix.
         </p>

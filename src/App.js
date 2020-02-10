@@ -6,6 +6,7 @@ import Shelf from './components/Shelf'
 import Oauth from './components/Oauth'
 import useStateWithLocalStorage from './utils/useStateWithLocalStorage'
 import { version } from './../package.json'
+import { timestamp } from './utils/timestamp.json'
 import './styl/App.css'
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
   const [cassette, setCassette] = useState(null)
 
   const props = {
+    timestamp,
     version,
     token,
     cassette,
