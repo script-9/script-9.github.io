@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { navigate } from '@reach/router'
-import * as idb from 'idb-keyval'
+// import * as idb from 'idb-keyval'
 import NavLink from './NavLink'
 import network from './../utils/network'
-import uuid from './../utils/uuid'
+// import uuid from './../utils/uuid'
 import isCassetteDirty from './../utils/isCassetteDirty'
 
 const Nav = props => {
-  const { token, path, location, cassette, setCassette, version } = props
-  const [isDirty, setIsDirty] = useState(false)
+  const { path, location, cassette, setCassette } = props
+  const [, setIsDirty] = useState(false)
 
   useEffect(() => {
     const { search } = location
@@ -45,44 +45,44 @@ const Nav = props => {
     isCassetteDirty(cassette).then(setIsDirty)
   }, [cassette])
 
-  const handleNew = () => {
-    setCassette(null)
-  }
+  // const handleNew = () => {
+  //   setCassette(null)
+  // }
 
-  const handleSave = async () => {
-    try {
-      // If save goes through:
-      // - remove cassette from idb
-      // - remove its idbId
-      const gist = await network.saveGist({ cassette, token })
-      if (cassette.idbId) {
-        await idb.del(cassette.idbId)
-      }
-      const updatedCassette = {
-        ...cassette,
-        gist,
-        idbId: null,
-      }
-      setCassette(updatedCassette)
-    } catch (error) {
-      // If save fails:
-      // - give cassette an idbId
-      // - remove the gist part, but keep gistId
-      // - put cassette in idb
-      const updatedCassette = {
-        ...cassette,
-        idbUpdatedAt: Date.now(),
-        idbId: cassette.idbId || uuid(),
-        gist: null,
-        gistId: (cassette.gist && cassette.gist.id) || null,
-      }
-      await idb.set(updatedCassette.idbId, updatedCassette)
-      setCassette(updatedCassette)
-    }
-  }
+  // const handleSave = async () => {
+  //   try {
+  //     // If save goes through:
+  //     // - remove cassette from idb
+  //     // - remove its idbId
+  //     const gist = await network.saveGist({ cassette, token })
+  //     if (cassette.idbId) {
+  //       await idb.del(cassette.idbId)
+  //     }
+  //     const updatedCassette = {
+  //       ...cassette,
+  //       gist,
+  //       idbId: null,
+  //     }
+  //     setCassette(updatedCassette)
+  //   } catch (error) {
+  //     // If save fails:
+  //     // - give cassette an idbId
+  //     // - remove the gist part, but keep gistId
+  //     // - put cassette in idb
+  //     const updatedCassette = {
+  //       ...cassette,
+  //       idbUpdatedAt: Date.now(),
+  //       idbId: cassette.idbId || uuid(),
+  //       gist: null,
+  //       gistId: (cassette.gist && cassette.gist.id) || null,
+  //     }
+  //     await idb.set(updatedCassette.idbId, updatedCassette)
+  //     setCassette(updatedCassette)
+  //   }
+  // }
 
-  const isNew = !cassette || !(cassette.contents && cassette.contents.code)
-  const canSave = (!isNew && isDirty) || (!isNew && cassette.idbId)
+  // const isNew = !cassette || !(cassette.contents && cassette.contents.code)
+  // const canSave = (!isNew && isDirty) || (!isNew && cassette.idbId)
 
   return (
     <nav>
@@ -95,7 +95,7 @@ const Nav = props => {
               SCRIPT-8
             </NavLink>
           </li>
-          {/* <li>
+          <li>
             <NavLink
               to={
                 cassette && cassette.gist
@@ -116,7 +116,7 @@ const Nav = props => {
             >
               Shelf
             </NavLink>
-          </li> */}
+          </li>
           {/* <li>
             <a href={`${process.env.REACT_APP_NOW}/api/oauth-authorize`}>
               comments-login

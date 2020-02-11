@@ -1,22 +1,28 @@
-// block for `time` ms, then return the number of loops we could run in that time:
-export function expensive(time) {
-  let start = Date.now()
-  let count = 0
-  while (Date.now() - start < time) count++
-  return count
+/* eslint no-restricted-globals: 1 */
+/* eslint no-new-func: 0 */
+
+export function run(something) {
+  // console.log(something)
+  return 'this is the function string'
 }
 
-const gabriel = () => {
-  return 'florit'
-}
+// export function run(functionString) {
+//   // Add API to worker scope.
+//   self.setPixel = makeSetPixel([])
 
-export function hello() {
-  const fun = new Function(`
-  
-  console.log(gabriel);
-  return 5
+//   // Create Function and set its scope to worker scope.
+//   const userFunction = new Function(functionString)
+//   // Call Function.
+//   userFunction.call(self)
 
-  `)
-  const value = fun()
-  return [2, value]
-}
+//   // Create the script8 state.
+//   const state = {}
+
+//   // Now that we have init/update/draw on the worker scope,
+//   // we can call them.
+//   self.init(state)
+//   self.update(state)
+//   self.draw(state)
+
+//   return true
+// }

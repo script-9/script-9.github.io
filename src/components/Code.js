@@ -8,7 +8,6 @@ const Code = props => {
     <>
       <Nav {...props} />
       <div className="Code">
-        <h1>Code</h1>
         <Editor {...props} />
         <Output {...props} />
       </div>
