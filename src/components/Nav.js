@@ -117,6 +117,17 @@ const Nav = props => {
               Shelf
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              to={
+                cassette && cassette.gist
+                  ? `/run?id=${cassette.gist.id}`
+                  : '/run'
+              }
+            >
+              Run
+            </NavLink>
+          </li>
           {/* <li>
             <a href={`${process.env.REACT_APP_NOW}/api/oauth-authorize`}>
               comments-login
