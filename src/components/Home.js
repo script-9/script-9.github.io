@@ -40,7 +40,7 @@ const Home = props => {
           </a>
           . Cassettes are written in JavaScript.
         </p>
-        <p class="thumbnails">
+        <p className="thumbnails">
           <img src={loshermanosbrosgif} alt="Los hermanos bros game gif" />
           <img src={bombgif} alt="8-bomb game gif" />
           <img src={dungeongif} alt="dungeon game gif" />
