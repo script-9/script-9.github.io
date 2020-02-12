@@ -1,28 +1,47 @@
-/* eslint no-restricted-globals: 1 */
-/* eslint no-new-func: 0 */
+import createPixelData from './../frameBuffer/createPixelData'
+import makeSetPixel from './../frameBuffer/makeSetPixel'
 
-export function run(something) {
-  // console.log(something)
-  return 'this is the function string'
+const pixelData = createPixelData({ width: 128, height: 128 })
+const setPixel = makeSetPixel(pixelData.pixels)
+const getRandomInt = max => Math.floor(Math.random() * Math.floor(max))
+
+export async function computePixelBytes(count) {
+  const xs = [...Array(count)]
+  xs.forEach((_, x) => {
+    xs.forEach((_, y) => {
+      setPixel(x, y, getRandomInt(8))
+    })
+  })
+
+  return pixelData.pixelBytes
 }
+// const computePixelBytes = async () => {
+//   return 10
+// }
 
-// export function run(functionString) {
-//   // Add API to worker scope.
-//   self.setPixel = makeSetPixel([])
+// export async computePixelBytes
 
-//   // Create Function and set its scope to worker scope.
-//   const userFunction = new Function(functionString)
-//   // Call Function.
-//   userFunction.call(self)
+// export function expensive(time) {
+//   let start = Date.now(),
+//     count = 0
+//   while (Date.now() - start < time) count++
+//   return count
+// }
 
-//   // Create the script8 state.
-//   const state = {}
+// this.importScripts('./colors.js')
+// this.importScripts('./makePixelData.js')
+// this.importScripts('./setPixel.js')
 
-//   // Now that we have init/update/draw on the worker scope,
-//   // we can call them.
-//   self.init(state)
-//   self.update(state)
-//   self.draw(state)
+// const pixelData = this.makePixelData()
+// this.pixels = pixelData.pixels
 
-//   return true
+// onmessage = function(e) {
+//   const xs = [...Array(e.data[0])]
+//   xs.forEach((_, x) => {
+//     xs.forEach((_, y) => {
+//       this.setPixel(x, y, getRandomInt(8))
+//     })
+//   })
+
+//   postMessage(pixelData._pixelBytes)
 // }

@@ -1,11 +1,12 @@
-this.makePixelData = () => {
+const createPixelData = ({ width, height }) => {
   console.log('MAKING PIXEL DATA')
-  const width = 128
-  const height = 128
 
-  // Pixel data has the actual image data object
-  // which can be passed to putImageData.
-  const _pixelData = new ImageData(width, height)
+  // Pixel data has the actual image data object which can be passed
+  // to putImageData.
+  // This is not in use here, since the webworker doesn't handle ImageData.
+  // This is left over from the previous version, and I find it useful,
+  // so I can remember how all these come together to draw a canvas.
+  // const _pixelData = new ImageData(width, height)
 
   // This contains the actual binary data for setting on _pixelData. It cannot
   // be accessed directly, but is instead modified through TypedArrays such as
@@ -25,7 +26,9 @@ this.makePixelData = () => {
   const _pixelIntegers = new Uint32Array(_pixelBuffer)
 
   return {
+    pixelBytes: _pixelBytes,
     pixels: _pixelIntegers,
-    _pixelBytes,
   }
 }
+
+export default createPixelData
