@@ -13,21 +13,15 @@ const Run = props => {
   }, [])
 
   const handleClick = count => {
-    // console.log('Posting message to worker.')
     const before = Date.now()
     workerRef.current.postMessage([count, _pixelBytesRef.current])
 
     workerRef.current.onmessage = function(e) {
-      // console.log(`Received message from worker: ${e.data}`)
       setDuration(Date.now() - before)
       _pixelBytesRef.current = e.data
       canvasRef.current.draw(_pixelBytesRef.current)
     }
   }
-
-  // Create an instance web worker.
-  // On load, ask it to give us the data.
-  // Then draw it.
 
   return (
     <>

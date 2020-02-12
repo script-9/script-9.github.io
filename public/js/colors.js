@@ -1,6 +1,4 @@
-/* eslint no-restricted-globals: 1 */
-
-self.colors = (() => {
+this.colors = (() => {
   // Lookup table for triplet arrays containing R, G, and B values.
   const triplets = [
     [246, 214, 189],

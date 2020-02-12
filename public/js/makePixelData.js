@@ -1,6 +1,4 @@
-/* eslint no-restricted-globals: 1 */
-
-self.makePixelData = () => {
+this.makePixelData = () => {
   console.log('MAKING PIXEL DATA')
   const width = 128
   const height = 128
@@ -26,19 +24,8 @@ self.makePixelData = () => {
   // ever modified via the Uint32Array for performance reasons.
   const _pixelIntegers = new Uint32Array(_pixelBuffer)
 
-  // const writePixelDataToCanvas = ctx => {
-  //   _pixelData.data.set(_pixelBytes)
-  //   console.log(_pixelBytes.length)
-  //   ctx.putImageData(_pixelData, 0, 0)
-  // }
-
   return {
     pixels: _pixelIntegers,
     _pixelBytes,
-
-    // _pixelData,
-    // _pixelBuffer,
-    // _pixelBytes,
-    // _pixelIntegers,
   }
 }
