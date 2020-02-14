@@ -1,15 +1,26 @@
 /* eslint no-eval: 0 */
 /* eslint no-new-func: 0 */
+// /* eslint no-restricted-globals: 0 */
 
-this.importScripts('./colors.js')
 this.importScripts('./makePixelData.js')
-this.importScripts('./setPixel.js')
-this.importScripts('./testFunction.js')
+this.importScripts('./colors.js')
+this.importScripts('./canvasApi/index.js')
+this.importScripts('./userCode.js')
 
 const getRandomInt = max => Math.floor(Math.random() * Math.floor(max))
 
 const pixelData = this.makePixelData()
-this.pixels = pixelData.pixels
+const pixels = pixelData.pixels
+
+const canvasApi = this.createCanvasApi({
+  pixels,
+  width: 128,
+  height: 128,
+})
+
+for (const func in canvasApi) {
+  this[func] = canvasApi[func]
+}
 
 onmessage = function(e) {
   switch (e.data) {
@@ -23,7 +34,7 @@ onmessage = function(e) {
       break
     }
     case 'Function': {
-      const func = new Function(this.testFunction)
+      const func = new Function(this.userCode)
       func()
 
       // Create the script8 state.
@@ -38,7 +49,7 @@ onmessage = function(e) {
       break
     }
     case 'eval': {
-      eval(this.testFunction)
+      eval(this.userCode)
 
       // Create the script8 state.
       const state = {}
@@ -55,5 +66,5 @@ onmessage = function(e) {
     }
   }
 
-  postMessage(pixelData._pixelBytes)
+  postMessage(pixelData.pixelBytes)
 }
