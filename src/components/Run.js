@@ -7,20 +7,38 @@ const Run = props => {
   const workerRef = useRef()
   const _pixelBytesRef = useRef()
   const [duration, setDuration] = useState(null)
+  const [roundtrips, setRoundtrips] = useState(null)
 
   useEffect(() => {
     workerRef.current = new Worker('js/worker.js')
   }, [])
 
-  const handleClick = count => {
+  const handleClick = method => {
     const before = Date.now()
-    workerRef.current.postMessage([count, _pixelBytesRef.current])
+    setRoundtrips(null)
+    setDuration(null)
 
-    workerRef.current.onmessage = function(e) {
-      setDuration(Date.now() - before)
-      _pixelBytesRef.current = e.data
-      canvasRef.current.draw(_pixelBytesRef.current)
-    }
+    let _roundtrips = 0
+    let stop = false
+    const intervalId = setInterval(() => {
+      workerRef.current.postMessage(method)
+
+      workerRef.current.onmessage = function(e) {
+        if (!stop) {
+          _pixelBytesRef.current = e.data
+          canvasRef.current.draw(_pixelBytesRef.current)
+          _roundtrips++
+          const after = Date.now()
+          const delta = after - before
+          if (delta > 1000 * 5) {
+            stop = true
+            clearInterval(intervalId)
+            setRoundtrips(_roundtrips)
+            setDuration(delta)
+          }
+        }
+      }
+    }, 0)
   }
 
   return (
@@ -29,20 +47,15 @@ const Run = props => {
       <div className="Run">
         <Canvas ref={canvasRef} />
         <div className="buttons">
-          {[2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048].map(
-            (value, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  handleClick(value)
-                }}
-              >
-                {!index && 'Draw'} {value}
-              </button>
-            ),
-          )}
+          {['inline', 'eval', 'Function'].map(method => (
+            <button key={method} onClick={() => handleClick(method)}>
+              {method}
+            </button>
+          ))}
         </div>
-        <span>Duration: {duration}ms</span>
+        <div>Duration: {duration}ms</div>
+        <div>Roundtrips: {roundtrips}</div>
+        <div>1 frame takes {duration / roundtrips}ms</div>
       </div>
     </>
   )
