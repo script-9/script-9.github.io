@@ -1,39 +1,39 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c9bb729e137917c0e194bfae8a13a052",
+    "revision": "ee450eca446c363d687de32adbaadfb6",
     "url": "/index.html"
   },
   {
-    "revision": "094a0acc53f5c4ab2f09",
-    "url": "/static/css/main.cb173275.chunk.css"
+    "revision": "aff83c83e4ebcdfc1544",
+    "url": "/static/css/main.1056912a.chunk.css"
   },
   {
-    "revision": "c095f0a293e98c75d873",
-    "url": "/static/js/2.f1e1270a.chunk.js"
+    "revision": "061488e795b99269e5a7",
+    "url": "/static/js/2.ab9d2670.chunk.js"
   },
   {
-    "revision": "da01034c70d479d890a70d42d48c6305",
-    "url": "/static/js/2.f1e1270a.chunk.js.LICENSE"
+    "revision": "98061d712500f07672e3581cfdcd5a24",
+    "url": "/static/js/2.ab9d2670.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "094a0acc53f5c4ab2f09",
-    "url": "/static/js/main.adb9d391.chunk.js"
+    "revision": "aff83c83e4ebcdfc1544",
+    "url": "/static/js/main.66bfedf0.chunk.js"
   },
   {
     "revision": "fe494c930513ade041ad",
     "url": "/static/js/runtime-main.180b83f4.js"
   },
   {
+    "revision": "5025e9553ef59c390cbea824494c315c",
+    "url": "/static/media/8bomb.5025e955.gif"
+  },
+  {
     "revision": "e3552630d2013510a2427685ac569e87",
     "url": "/static/media/VT323-latin.e3552630.woff2"
   },
   {
-    "revision": "a4d778a25a03429630e9bd1fc34561a8",
-    "url": "/static/media/breakout-lite.a4d778a2.gif"
-  },
-  {
-    "revision": "82f3b93a5847e0c25215acf9c71dd880",
-    "url": "/static/media/brospipe-lite.82f3b93a.gif"
+    "revision": "98e9f8a69679f116e06ef45e38c3e038",
+    "url": "/static/media/dungeon.98e9f8a6.gif"
   },
   {
     "revision": "20d1866a2d8dd694a13b3e8b9df6ff45",
@@ -56,12 +56,24 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/pauserewind.741e69fa.gif"
   },
   {
+    "revision": "5577896beecd8ebd79c114e239bb6c6e",
+    "url": "/static/media/porklike.5577896b.gif"
+  },
+  {
     "revision": "dc4d8c4bb35839a6a95c9c38c819dbaa",
     "url": "/static/media/slider480.dc4d8c4b.gif"
   },
   {
     "revision": "761594647c3ac1632d9d527b27edc03e",
     "url": "/static/media/spritedemo.76159464.gif"
+  },
+  {
+    "revision": "c4b71463a0c7404a0842c588934af793",
+    "url": "/static/media/supplies.c4b71463.gif"
+  },
+  {
+    "revision": "5da68a3d9fdbdd0d2d554a3e808235b8",
+    "url": "/static/media/tanks.5da68a3d.gif"
   },
   {
     "revision": "4ab6d6b63a0a6b3b0c8869dcd540278e",
