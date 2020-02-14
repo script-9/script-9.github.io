@@ -1,47 +1,70 @@
+/* eslint no-eval: 0 */
+/* eslint no-new-func: 0 */
+/* eslint no-restricted-globals: 0 */
+
 import createPixelData from './../frameBuffer/createPixelData'
 import makeSetPixel from './../frameBuffer/makeSetPixel'
+import userCode from './../utils/testFunction'
 
 const pixelData = createPixelData({ width: 128, height: 128 })
 const setPixel = makeSetPixel(pixelData.pixels)
+
 const getRandomInt = max => Math.floor(Math.random() * Math.floor(max))
 
-export async function computePixelBytes(count) {
-  const xs = [...Array(count)]
-  xs.forEach((_, x) => {
-    xs.forEach((_, y) => {
-      setPixel(x, y, getRandomInt(8))
-    })
-  })
+addEventListener('message', e => {
+  switch (e.data) {
+    case 'inline': {
+      const xs = [...Array(128)]
+      xs.forEach((_, x) => {
+        xs.forEach((_, y) => {
+          setPixel(x, y, getRandomInt(8))
+        })
+      })
+      break
+    }
+    case 'Function': {
+      self.setPixel = setPixel
+      self.getRandomInt = getRandomInt
 
-  return pixelData.pixelBytes
-}
-// const computePixelBytes = async () => {
-//   return 10
-// }
+      self.init = () => {}
+      self.update = () => {}
+      self.draw = () => {}
 
-// export async computePixelBytes
+      const func = new Function(userCode)
+      func.call(self)
 
-// export function expensive(time) {
-//   let start = Date.now(),
-//     count = 0
-//   while (Date.now() - start < time) count++
-//   return count
-// }
+      // Create the script8 state.
+      const state = {}
 
-// this.importScripts('./colors.js')
-// this.importScripts('./makePixelData.js')
-// this.importScripts('./setPixel.js')
+      // Now that we have init/update/draw on the worker scope,
+      // we can call them.
+      self.init(state)
+      self.update(state)
+      self.draw(state)
 
-// const pixelData = this.makePixelData()
-// this.pixels = pixelData.pixels
+      break
+    }
+    case 'eval': {
+      self.init = () => {}
+      self.update = () => {}
+      self.draw = () => {}
 
-// onmessage = function(e) {
-//   const xs = [...Array(e.data[0])]
-//   xs.forEach((_, x) => {
-//     xs.forEach((_, y) => {
-//       this.setPixel(x, y, getRandomInt(8))
-//     })
-//   })
+      eval(userCode)
 
-//   postMessage(pixelData._pixelBytes)
-// }
+      // Create the script8 state.
+      const state = {}
+
+      // Now that we have init/update/draw on the worker scope,
+      // we can call them.
+      self.init(state)
+      self.update(state)
+      self.draw(state)
+
+      break
+    }
+    default: {
+    }
+  }
+
+  postMessage(pixelData.pixelBytes)
+})
