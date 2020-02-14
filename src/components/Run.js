@@ -2,15 +2,17 @@ import React, { useRef, useEffect, useState } from 'react'
 import Canvas from './Canvas'
 import Nav from './Nav'
 
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import worker from 'workerize-loader!./../workers/worker'
+
 const Run = props => {
   const canvasRef = useRef()
   const workerRef = useRef()
-  const _pixelBytesRef = useRef()
   const [duration, setDuration] = useState(null)
   const [roundtrips, setRoundtrips] = useState(null)
 
   useEffect(() => {
-    workerRef.current = new Worker('js/worker.js')
+    workerRef.current = worker()
   }, [])
 
   const handleClick = method => {
