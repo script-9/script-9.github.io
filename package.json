@@ -1,6 +1,6 @@
 {
   "name": "script-9.github.io",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "homepage": "https://script-9.github.io",
   "dependencies": {
     "@reach/router": "^1.2.1",
