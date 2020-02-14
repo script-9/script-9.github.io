@@ -10,13 +10,17 @@ const Run = props => {
   const [roundtrips, setRoundtrips] = useState(null)
 
   useEffect(() => {
-    workerRef.current = new Worker('js/worker.js')
+    workerRef.current = new Worker('./../workers/worker.js', {
+      type: 'module',
+    })
   }, [])
 
   const handleClick = method => {
     const before = Date.now()
     setRoundtrips(null)
     setDuration(null)
+
+    // workerRef.current.postMessage(method)
 
     let _roundtrips = 0
     let stop = false

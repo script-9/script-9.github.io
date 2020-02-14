@@ -11,7 +11,12 @@ update = (state, input, elapsed) => {
 }
 
 draw = state => {
-  rectFill(state.x, state.y, state.w, state.h, state.c)
+  const xs = [...Array(128)]
+  xs.forEach((_, x) => {
+    xs.forEach((_, y) => {
+      setPixel(x, y, getRandomInt(8))
+    })
+  })
 }
 `
 
