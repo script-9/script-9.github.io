@@ -2,14 +2,23 @@
 /* eslint no-new-func: 0 */
 /* eslint no-restricted-globals: 0 */
 
-import createPixelData from './../frameBuffer/createPixelData'
-import makeSetPixel from './../frameBuffer/makeSetPixel'
-import userCode from './../utils/testFunction'
+import createPixelData from './../canvasApi/createPixelData'
+import createCanvasApi from './../canvasApi/index'
+
+import userCode from '../utils/testFunction'
 
 const pixelData = createPixelData({ width: 128, height: 128 })
-const setPixel = makeSetPixel(pixelData.pixels)
+const canvasApi = createCanvasApi({
+  width: 128,
+  height: 128,
+  pixels: pixelData.pixels,
+})
 
-const getRandomInt = max => Math.floor(Math.random() * Math.floor(max))
+for (const func in canvasApi) {
+  self[func] = canvasApi[func]
+}
+
+self.getRandomInt = max => Math.floor(Math.random() * Math.floor(max))
 
 addEventListener('message', e => {
   switch (e.data) {
@@ -17,21 +26,18 @@ addEventListener('message', e => {
       const xs = [...Array(128)]
       xs.forEach((_, x) => {
         xs.forEach((_, y) => {
-          setPixel(x, y, getRandomInt(8))
+          self.setPixel(x, y, self.getRandomInt(8))
         })
       })
       break
     }
     case 'Function': {
-      self.setPixel = setPixel
-      self.getRandomInt = getRandomInt
-
       self.init = () => {}
       self.update = () => {}
       self.draw = () => {}
 
       const func = new Function(userCode)
-      func.call(self)
+      func()
 
       // Create the script8 state.
       const state = {}
@@ -41,7 +47,6 @@ addEventListener('message', e => {
       self.init(state)
       self.update(state)
       self.draw(state)
-
       break
     }
     case 'eval': {
@@ -59,12 +64,10 @@ addEventListener('message', e => {
       self.init(state)
       self.update(state)
       self.draw(state)
-
       break
     }
     default: {
     }
   }
-
   postMessage(pixelData.pixelBytes)
 })
