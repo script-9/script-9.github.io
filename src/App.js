@@ -6,6 +6,7 @@ import Run from './components/Run'
 import Shelf from './components/Shelf'
 import Oauth from './components/Oauth'
 import useStateWithLocalStorage from './utils/useStateWithLocalStorage'
+import demoCode from './utils/demoCode'
 import { version } from './../package.json'
 import { timestamp } from './utils/timestamp.json'
 import './styl/App.css'
@@ -15,7 +16,11 @@ const App = () => {
   const [commentsToken, setCommentsToken] = useStateWithLocalStorage(
     'comments-token',
   )
-  const [cassette, setCassette] = useState(null)
+  const [cassette, setCassette] = useState({
+    contents: {
+      code: demoCode,
+    },
+  })
 
   const props = {
     timestamp,

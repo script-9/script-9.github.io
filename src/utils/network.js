@@ -60,7 +60,7 @@ const editGist = async ({ cassette, token }) => {
     },
     body: JSON.stringify(payload),
   }
-  const id = cassette.gist ? cassette.gist.id : cassette.gistId
+  const id = cassette.gist?.id || cassette.gistId
   const url = `https://api.github.com/gists/${id}`
   options.method = 'PATCH'
   const response = await fetch(url, options)

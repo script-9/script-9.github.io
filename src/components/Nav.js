@@ -14,7 +14,7 @@ const Nav = props => {
     const { search } = location
     const params = new window.URLSearchParams(search)
     const id = params.get('id')
-    if (!(cassette && cassette.gist) && id) {
+    if (!cassette?.gist && id) {
       network
         .fetchGist(id)
         .then(gist => {
@@ -34,7 +34,7 @@ const Nav = props => {
   }, [cassette, setCassette, location])
 
   useEffect(() => {
-    if (cassette && cassette.gist) {
+    if (cassette?.gist) {
       navigate(`${path}?id=${cassette.gist.id}`)
     } else {
       navigate(`${path}`)
