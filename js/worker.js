@@ -1,18 +1,39 @@
 /* eslint no-eval: 0 */
 /* eslint no-new-func: 0 */
+// /* eslint no-restricted-globals: 0 */
 
-this.importScripts('./colors.js')
 this.importScripts('./makePixelData.js')
-this.importScripts('./setPixel.js')
-this.importScripts('./testFunction.js')
+this.importScripts('./colors.js')
+this.importScripts('./canvasApi/alphabet.js')
+this.importScripts('./canvasApi/circle.js')
+this.importScripts('./canvasApi/line.js')
+this.importScripts('./canvasApi/polyStroke.js')
+this.importScripts('./canvasApi/print.js')
+this.importScripts('./canvasApi/rect.js')
+this.importScripts('./canvasApi/index.js')
 
 const getRandomInt = max => Math.floor(Math.random() * Math.floor(max))
 
 const pixelData = this.makePixelData()
-this.pixels = pixelData.pixels
+const pixels = pixelData.pixels
+
+const canvasApi = this.createCanvasApi({
+  pixels,
+  width: 128,
+  height: 128,
+})
+
+for (const func in canvasApi) {
+  this[func] = canvasApi[func]
+}
+
+const noop = () => {}
 
 onmessage = function(e) {
-  switch (e.data) {
+  const [userCode, startDate] = e.data
+  const method = 'Function'
+
+  switch (method) {
     case 'inline': {
       const xs = [...Array(128)]
       xs.forEach((_, x) => {
@@ -23,7 +44,11 @@ onmessage = function(e) {
       break
     }
     case 'Function': {
-      const func = new Function(this.testFunction)
+      this.init = noop
+      this.update = noop
+      this.draw = noop
+
+      const func = new Function(userCode || '')
       func()
 
       // Create the script8 state.
@@ -38,7 +63,7 @@ onmessage = function(e) {
       break
     }
     case 'eval': {
-      eval(this.testFunction)
+      eval(userCode)
 
       // Create the script8 state.
       const state = {}
@@ -55,5 +80,5 @@ onmessage = function(e) {
     }
   }
 
-  postMessage(pixelData._pixelBytes)
+  postMessage([pixelData.pixelBytes, startDate])
 }

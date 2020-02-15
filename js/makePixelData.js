@@ -28,7 +28,7 @@ this.makePixelData = () => {
   const _pixelIntegers = new Uint32Array(_pixelBuffer)
 
   return {
-    _pixelBytes,
+    pixelBytes: _pixelBytes,
     pixels: _pixelIntegers,
   }
 }

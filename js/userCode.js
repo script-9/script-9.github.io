@@ -1,4 +1,4 @@
-this.testFunction = `
+this.userCode = `
 init = state => {
   state.x = 0
   state.y = 0
