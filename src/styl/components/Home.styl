@@ -1,0 +1,63 @@
+.Home
+  nav
+    margin-bottom 3rem
+
+  h1
+    visibility hidden
+    position absolute
+
+  .logo-and-timestamp
+    display grid
+    grid-template-columns 50% 50%
+    grid-row-gap 0.75rem
+    width calc(100vw - 3rem)
+    max-width 46rem
+    margin 0 auto 3rem auto
+    img
+      width 100%
+      display inline-block
+      grid-column 1/3
+      image-rendering pixelated
+    span
+      font-size $font-small
+      color $palette-2
+      &:nth-child(3)
+        text-align right
+
+  p
+    width calc(100vw - 3rem)
+    max-width 46rem
+    margin 3rem auto
+    color $palette-2
+
+    &.thumbnails
+      margin 0 auto
+      display flex
+      justify-content space-evenly
+      flex-wrap wrap
+      img
+        width calc(128px - 8px)
+        padding 0.75rem 4px
+        image-rendering pixelated
+
+    &.feature
+      display grid
+      grid-template-columns auto 30rem
+      grid-column-gap 1.5rem
+      margin-bottom 6rem
+      @media screen and (max-width: 44rem)
+        grid-template-columns 100%
+        grid-column-gap 0
+        grid-row-gap 1.5rem
+
+      span
+        &:before
+          content '▪ '
+        font-size $font-large
+      img
+        width 100%
+        image-rendering pixelated
+        @media screen and (max-width: 44rem)
+          max-width 32rem
+          margin 0 auto
+

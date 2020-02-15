@@ -1,24 +1,36 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 const Editor = props => {
   const { cassette, setCassette } = props
 
-  const handleTextareaChange = e => {
-    e.persist() // TODO: why is this necessary again?
-    setCassette((cassette = {}) => ({
-      ...cassette,
-      contents: {
-        code: e.target.value,
-      },
-    }))
-  }
+  const codeMirrorDiv = useRef()
+  const codeMirrorRef = useRef()
+
+  useEffect(() => {
+    codeMirrorRef.current = window.CodeMirror(codeMirrorDiv.current, {
+      value: cassette?.contents?.code || '',
+      mode: 'javascript',
+      theme: 'nyx8',
+      lineNumbers: true,
+      tabSize: 2,
+      cursorBlinkRate: 0,
+      scrollbarStyle: null,
+    })
+
+    codeMirrorRef.current.on('change', cm => {
+      const content = cm.getValue()
+      setCassette((cassette = {}) => ({
+        ...cassette,
+        contents: {
+          code: content,
+        },
+      }))
+    })
+  }, [])
 
   return (
     <div className="Editor">
-      <textarea
-        value={cassette?.contents?.code || ''}
-        onChange={handleTextareaChange}
-      ></textarea>
+      <div ref={codeMirrorDiv} />
     </div>
   )
 }

@@ -57,13 +57,11 @@ const OfflineCassettes = props => {
 
 const Shelf = props => {
   return (
-    <>
+    <div className="Shelf">
       <Nav {...props} />
-      <div className="Shelf">
-        <h1>Shelf</h1>
-        <OfflineCassettes {...props} />
-      </div>
-    </>
+      <h1>Shelf</h1>
+      <OfflineCassettes {...props} />
+    </div>
   )
 }
 

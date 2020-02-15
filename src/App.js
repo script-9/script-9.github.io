@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import classNames from 'classnames'
 import { Router } from '@reach/router'
 import Home from './components/Home'
 import Code from './components/Code'
@@ -32,15 +33,15 @@ const App = () => {
     setCommentsToken,
   }
   return (
-    <div className="App">
+    <>
       <Router>
         <Home path="/" {...props} />
         <Code path="/code" {...props} />
         <Run path="/run" {...props} />
         <Oauth path="/oauth-comments" {...props} />
-        <Shelf path="/shelf" {...props} />
+        {/* <Shelf path="/shelf" {...props} /> */}
       </Router>
-    </div>
+    </>
   )
 }
 

@@ -5,13 +5,11 @@ import Nav from './Nav'
 
 const Code = props => {
   return (
-    <>
+    <div className="Code">
       <Nav {...props} />
-      <div className="Code">
-        <Editor {...props} />
-        <Output {...props} />
-      </div>
-    </>
+      <Editor {...props} />
+      <Output {...props} />
+    </div>
   )
 }
 

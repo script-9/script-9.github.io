@@ -6,7 +6,7 @@ const demoCode = `draw = () => {
     rectFill(xy, xy, side, side, i)
   })
 
-  print(60, 61, 'hi.', 0, 7)
+  print(60, 62, 'hi.', 0)
 }`
 
 export default demoCode

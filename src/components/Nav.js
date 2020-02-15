@@ -74,14 +74,14 @@ const Nav = props => {
   //       idbUpdatedAt: Date.now(),
   //       idbId: cassette.idbId || uuid(),
   //       gist: null,
-  //       gistId: (cassette.gist && cassette.gist.id) || null,
+  //       gistId: (cassette.gist?.id) || null,
   //     }
   //     await idb.set(updatedCassette.idbId, updatedCassette)
   //     setCassette(updatedCassette)
   //   }
   // }
 
-  // const isNew = !cassette || !(cassette.contents && cassette.contents.code)
+  // const isNew = !cassette || !(cassette.contents?.code)
   // const canSave = (!isNew && isDirty) || (!isNew && cassette.idbId)
 
   return (
@@ -89,24 +89,18 @@ const Nav = props => {
       <div className="pages">
         <ul>
           <li>
-            <NavLink
-              to={cassette && cassette.gist ? `/?id=${cassette.gist.id}` : '/'}
-            >
+            <NavLink to={cassette?.gist ? `/?id=${cassette.gist.id}` : '/'}>
               SCRIPT-8
             </NavLink>
           </li>
           <li>
             <NavLink
-              to={
-                cassette && cassette.gist
-                  ? `/code?id=${cassette.gist.id}`
-                  : '/code'
-              }
+              to={cassette?.gist ? `/code?id=${cassette.gist.id}` : '/code'}
             >
               Code
             </NavLink>
           </li>
-          <li>
+          {/* <li>
             <NavLink
               to={
                 cassette && cassette.gist
@@ -116,14 +110,10 @@ const Nav = props => {
             >
               Shelf
             </NavLink>
-          </li>
+          </li> */}
           <li>
             <NavLink
-              to={
-                cassette && cassette.gist
-                  ? `/run?id=${cassette.gist.id}`
-                  : '/run'
-              }
+              to={cassette?.gist ? `/run?id=${cassette.gist.id}` : '/run'}
             >
               Run
             </NavLink>

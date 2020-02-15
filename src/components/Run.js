@@ -4,12 +4,10 @@ import Output from './Output'
 
 const Run = props => {
   return (
-    <>
+    <div className="Run">
       <Nav {...props} />
-      <div className="Run">
-        <Output />
-      </div>
-    </>
+      <Output {...props} />
+    </div>
   )
 }
 
