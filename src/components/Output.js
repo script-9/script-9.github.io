@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 import Canvas from './Canvas'
+import getLintErrors from './../utils/getLintErrors'
 
 const Output = props => {
   const { cassette } = props
@@ -20,8 +21,13 @@ const Output = props => {
   }, [])
 
   useEffect(() => {
-    if (workerRef.current && cassette?.contents?.code) {
-      workerRef.current.postMessage([cassette.contents.code, Date.now()])
+    const code = cassette?.contents?.code
+    if (workerRef.current && code) {
+      // Validate code before sending.
+      const errors = getLintErrors(code)
+      if (!errors.length) {
+        workerRef.current.postMessage([code, Date.now()])
+      }
     }
   }, [cassette])
 

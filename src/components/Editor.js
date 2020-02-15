@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import getLintErrors from './../utils/getLintErrors'
 
 const Editor = props => {
   const { cassette, setCassette } = props
@@ -7,10 +8,12 @@ const Editor = props => {
   const codeMirrorRef = useRef()
 
   useEffect(() => {
+    window.CodeMirror.registerHelper('lint', 'javascript', getLintErrors)
     codeMirrorRef.current = window.CodeMirror(codeMirrorDiv.current, {
       value: cassette?.contents?.code || '',
       mode: 'javascript',
       theme: 'nyx8',
+      lint: true,
       lineNumbers: true,
       tabSize: 2,
       cursorBlinkRate: 0,
