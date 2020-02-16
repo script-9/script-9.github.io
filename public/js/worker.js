@@ -42,7 +42,7 @@ onmessage = function(e) {
         })
       })
 
-      postMessage([pixelData.pixelBytes, startDate])
+      postMessage(['draw', pixelData.pixelBytes, startDate])
       break
     }
     case 'Function': {
@@ -63,9 +63,9 @@ onmessage = function(e) {
         this.update(state)
         this.draw(state)
 
-        postMessage([pixelData.pixelBytes, startDate])
+        postMessage(['draw', startDate, pixelData.pixelBytes])
       } catch (error) {
-        postMessage([null, startDate, error])
+        postMessage(['error', startDate, error])
       }
 
       break
@@ -82,11 +82,11 @@ onmessage = function(e) {
       this.update(state)
       this.draw(state)
 
-      postMessage([pixelData.pixelBytes, startDate])
+      postMessage(['draw', startDate, pixelData.pixelBytes])
       break
     }
     default: {
-      postMessage([pixelData.pixelBytes, startDate])
+      postMessage(['draw', startDate, pixelData.pixelBytes])
     }
   }
 }

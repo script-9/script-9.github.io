@@ -8,67 +8,81 @@ const Output = props => {
   const canvasRef = useRef()
   const workerRef = useRef()
   const pixelBytesRef = useRef()
-  const sentAtRef = useRef()
-
+  const sentIdRef = useRef()
+  const receivedIdsRef = useRef([])
+  const setTimeoutIdRef = useRef()
   const [duration, setDuration] = useState(null)
 
   const initWorker = () => {
-    console.log('initing')
+    console.log('Initializing web worker.')
     workerRef.current = new Worker('js/worker.js')
     workerRef.current.onmessage = function(e) {
-      if (e.data[0]) {
-        pixelBytesRef.current = e.data[0]
-        canvasRef.current.draw(pixelBytesRef.current)
-        setDuration(Date.now() - e.data[1])
-        console.log({
-          m: 'received',
-          sentAtRef: sentAtRef.current,
-          received: e.data[1],
-        })
-        if (e.data[1] === sentAtRef.current) {
-          sentAtRef.current = null
+      const [messageType, receivedId, payload] = e.data
+
+      // Store receivedId in receivedIdsRef.
+      receivedIdsRef.current.push(receivedId)
+      setDuration(Date.now() - receivedId)
+
+      switch (messageType) {
+        // If message is 'draw',
+        // store ArrayBuffer in pixelBytesRef,
+        // and draw it.
+        case 'draw': {
+          console.log('Received message: draw')
+          pixelBytesRef.current = payload
+          canvasRef.current.draw(pixelBytesRef.current)
+          break
         }
-      } else {
-        // We got an error!
-        console.log({ m: 'error', error: e.data[2] })
-        if (e.data[1] === sentAtRef.current) {
-          sentAtRef.current = null
+        // If message is 'error',
+        // let user know.
+        case 'error': {
+          console.log('Received message: error')
+          console.log({ error: payload })
+          break
+        }
+        default: {
         }
       }
     }
   }
 
+  // On load,
+  // create the worker,
   useEffect(() => {
     initWorker()
   }, [])
 
-  // When the cassette changes,
+  // When the cassette code changes,
   useEffect(() => {
-    // if we have cassette code and a webworker,
     const code = cassette?.contents?.code
-    if (workerRef.current && code) {
-      // see if the code has lint errors.
-      const errors = getLintErrors(code)
-      // If it doesn't,
-      if (!errors.length) {
-        console.log({ cassette })
-        // send the code to the webworker,
-        // and in order to stop the worker if it's taking too long,
-        // we need to know when we sent this message.
-        // Send the timestamp but also keep it here.
-        sentAtRef.current = Date.now()
-        workerRef.current.postMessage([code, sentAtRef.current])
-        console.log({ m: 'sent message:', sentAtRef: sentAtRef.current })
-        console.log('waiting for timeout')
-        setTimeout(() => {
-          if (sentAtRef.current) {
-            console.log({ m: 'terminating', sentAtRef: sentAtRef.current })
-            workerRef.current.terminate()
-            initWorker()
-            // terminate worker
-          }
-        }, 2000)
+    // If we have a webworker, code, and no lint errors,
+    if (workerRef.current && code && !getLintErrors(code).length) {
+      // we are ready to send code to the worker.
+      // Send over a unique id, and save it in sentId.
+      // This means this unique id will always be associated with the
+      // most recent code we sent over.
+      sentIdRef.current = Date.now()
+      workerRef.current.postMessage([code, sentIdRef.current])
+
+      // Now for the timer logic.
+      // First: if we have a timer already, cancel it.
+      if (setTimeoutIdRef.current) {
+        clearInterval(setTimeoutIdRef.current)
       }
+
+      // Create the timer.
+      // One second after we sent the frame, check:
+      // is sentId in receivedIds? If so, all good. Cleanup/etc.
+      // If not, terminate, restart, and let user know.
+      setTimeoutIdRef.current = setTimeout(() => {
+        if (receivedIdsRef.current.includes(sentIdRef.current)) {
+          receivedIdsRef.current = []
+        } else {
+          workerRef.current.terminate()
+          console.log('TERMINATE web worker')
+          initWorker()
+        }
+      }, 1000)
     }
   }, [cassette])
 
@@ -81,29 +95,3 @@ const Output = props => {
 }
 
 export default Output
-// const handleClick = method => {
-//   const before = Date.now()
-//   setRoundtrips(null)
-//   setDuration(null)
-
-//   let _roundtrips = 0
-//   let stop = false
-//   const intervalId = setInterval(() => {
-//     workerRef.current.postMessage(method)
-
-//     workerRef.current.onmessage = function(e) {
-//       if (!stop) {
-//         pixelBytesRef.current = e.data
-//         canvasRef.current.draw(pixelBytesRef.current)
-//         _roundtrips++
-//         const after = Date.now()
-//         const delta = after - before
-//         if (delta > 1000 * 5) {
-//           stop = true
-//           clearInterval(intervalId)
-//           setRoundtrips(_roundtrips)
-//           setDuration(delta)
-//         }
-//       }
-//     }
-//   }, 0)
