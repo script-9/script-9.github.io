@@ -41,24 +41,32 @@ onmessage = function(e) {
           this.setPixel(x, y, getRandomInt(8))
         })
       })
+
+      postMessage([pixelData.pixelBytes, startDate])
       break
     }
     case 'Function': {
-      this.init = noop
-      this.update = noop
-      this.draw = noop
+      try {
+        this.init = noop
+        this.update = noop
+        this.draw = noop
 
-      const func = new Function(userCode || '')
-      func()
+        const func = new Function(userCode || '')
+        func()
 
-      // Create the script8 state.
-      const state = {}
+        // Create the script8 state.
+        const state = {}
 
-      // Now that we have init/update/draw on the worker scope,
-      // we can call them.
-      this.init(state)
-      this.update(state)
-      this.draw(state)
+        // Now that we have init/update/draw on the worker scope,
+        // we can call them.
+        this.init(state)
+        this.update(state)
+        this.draw(state)
+
+        postMessage([pixelData.pixelBytes, startDate])
+      } catch (error) {
+        postMessage([null, startDate, error])
+      }
 
       break
     }
@@ -74,11 +82,11 @@ onmessage = function(e) {
       this.update(state)
       this.draw(state)
 
+      postMessage([pixelData.pixelBytes, startDate])
       break
     }
     default: {
+      postMessage([pixelData.pixelBytes, startDate])
     }
   }
-
-  postMessage([pixelData.pixelBytes, startDate])
 }
