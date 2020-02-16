@@ -8,25 +8,66 @@ const Output = props => {
   const canvasRef = useRef()
   const workerRef = useRef()
   const pixelBytesRef = useRef()
+  const sentAtRef = useRef()
 
   const [duration, setDuration] = useState(null)
 
-  useEffect(() => {
+  const initWorker = () => {
+    console.log('initing')
     workerRef.current = new Worker('js/worker.js')
     workerRef.current.onmessage = function(e) {
-      pixelBytesRef.current = e.data[0]
-      canvasRef.current.draw(pixelBytesRef.current)
-      setDuration(Date.now() - e.data[1])
+      if (e.data[0]) {
+        pixelBytesRef.current = e.data[0]
+        canvasRef.current.draw(pixelBytesRef.current)
+        setDuration(Date.now() - e.data[1])
+        console.log({
+          m: 'received',
+          sentAtRef: sentAtRef.current,
+          received: e.data[1],
+        })
+        if (e.data[1] === sentAtRef.current) {
+          sentAtRef.current = null
+        }
+      } else {
+        // We got an error!
+        console.log({ m: 'error', error: e.data[2] })
+        if (e.data[1] === sentAtRef.current) {
+          sentAtRef.current = null
+        }
+      }
     }
-  }, [])
+  }
 
   useEffect(() => {
+    initWorker()
+  }, [])
+
+  // When the cassette changes,
+  useEffect(() => {
+    // if we have cassette code and a webworker,
     const code = cassette?.contents?.code
     if (workerRef.current && code) {
-      // Validate code before sending.
+      // see if the code has lint errors.
       const errors = getLintErrors(code)
+      // If it doesn't,
       if (!errors.length) {
-        workerRef.current.postMessage([code, Date.now()])
+        console.log({ cassette })
+        // send the code to the webworker,
+        // and in order to stop the worker if it's taking too long,
+        // we need to know when we sent this message.
+        // Send the timestamp but also keep it here.
+        sentAtRef.current = Date.now()
+        workerRef.current.postMessage([code, sentAtRef.current])
+        console.log({ m: 'sent message:', sentAtRef: sentAtRef.current })
+        console.log('waiting for timeout')
+        setTimeout(() => {
+          if (sentAtRef.current) {
+            console.log({ m: 'terminating', sentAtRef: sentAtRef.current })
+            workerRef.current.terminate()
+            initWorker()
+            // terminate worker
+          }
+        }, 2000)
       }
     }
   }, [cassette])

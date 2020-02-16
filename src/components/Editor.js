@@ -20,7 +20,7 @@ const Editor = props => {
       scrollbarStyle: null,
     })
 
-    codeMirrorRef.current.on('change', cm => {
+    codeMirrorRef.current.on('changes', cm => {
       const content = cm.getValue()
       setCassette((cassette = {}) => ({
         ...cassette,
