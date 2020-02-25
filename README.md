@@ -1,3 +1,8 @@
+## ROADMAP
+
+- On error, tell user where it happened
+- If code forced a termination/init, let user know
+
 ## DEPLOY
 
 - npm run push-version
