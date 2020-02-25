@@ -8,6 +8,7 @@ const Editor = props => {
   const codeMirrorRef = useRef()
 
   useEffect(() => {
+    // TODO: should we unregister?
     window.CodeMirror.registerHelper('lint', 'javascript', getLintErrors)
     codeMirrorRef.current = window.CodeMirror(codeMirrorDiv.current, {
       value: cassette?.contents?.code || '',
