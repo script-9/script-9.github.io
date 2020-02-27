@@ -3,19 +3,20 @@ import { Router } from '@reach/router'
 import Home from './components/Home'
 import Code from './components/Code'
 import Run from './components/Run'
-// import Shelf from './components/Shelf'
 import Oauth from './components/Oauth'
-import useStateWithLocalStorage from './utils/useStateWithLocalStorage'
+// import useStateWithLocalStorage from './utils/useStateWithLocalStorage'
 import demoCode from './utils/demoCode'
 import { version } from './../package.json'
 import { timestamp } from './utils/timestamp.json'
 import './styl/App.css'
 
 const App = () => {
-  const token = null
-  const [commentsToken, setCommentsToken] = useStateWithLocalStorage(
-    'comments-token',
-  )
+  // const token = null
+  // const [commentsToken, setCommentsToken] = useStateWithLocalStorage(
+  //   'comments-token',
+  // )
+
+  // Set cassette to demoCode for now.
   const [cassette, setCassette] = useState({
     contents: {
       code: demoCode,
@@ -25,11 +26,11 @@ const App = () => {
   const props = {
     timestamp,
     version,
-    token,
     cassette,
     setCassette,
-    commentsToken,
-    setCommentsToken,
+    // token,
+    // commentsToken,
+    // setCommentsToken,
   }
   return (
     <>
@@ -38,7 +39,6 @@ const App = () => {
         <Code path="/code" {...props} />
         <Run path="/run" {...props} />
         <Oauth path="/oauth-comments" {...props} />
-        {/* <Shelf path="/shelf" {...props} /> */}
       </Router>
     </>
   )
