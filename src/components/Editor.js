@@ -4,14 +4,20 @@ import getLintErrors from './../utils/getLintErrors'
 const Editor = props => {
   const { cassette, setCassette } = props
 
-  const codeMirrorDiv = useRef()
+  // The CodeMirror DOM node.
+  const codeMirrorDivRef = useRef()
+
+  // The CodeMirror instance.
   const codeMirrorRef = useRef()
 
+  // The cassette prop, as a mutable Ref. This way we can access the latest
+  // inside our CodeMirror.changes event.
+  const cassetteCodeRef = useRef(cassette)
+
+  // On mount, set CodeMirror on the DOM node.
   useEffect(() => {
-    // TODO: should we unregister?
     window.CodeMirror.registerHelper('lint', 'javascript', getLintErrors)
-    codeMirrorRef.current = window.CodeMirror(codeMirrorDiv.current, {
-      value: cassette?.contents?.code || '',
+    codeMirrorRef.current = window.CodeMirror(codeMirrorDivRef.current, {
       mode: 'javascript',
       theme: 'nyx8',
       lint: true,
@@ -21,20 +27,41 @@ const Editor = props => {
       scrollbarStyle: null,
     })
 
+    // When CodeMirror fires a `changes` event,
     codeMirrorRef.current.on('changes', cm => {
-      const content = cm.getValue()
-      setCassette((cassette = {}) => ({
-        ...cassette,
-        contents: {
-          code: content,
-        },
-      }))
+      // if CodeMirror isn't equal to the mutable cassette Ref,
+      const cmValue = cm.getValue()
+      if (cmValue !== cassetteCodeRef.current) {
+        // call setCassette with CodeMirror.
+        console.log('setCassette(codeMirror)')
+        setCassette((cassette = {}) => ({
+          ...cassette,
+          contents: {
+            code: cm.getValue(),
+          },
+        }))
+      }
     })
-  }, [])
+  }, [setCassette])
+
+  // When cassette changes:
+  useEffect(() => {
+    // first, set the cassette's code to a mutable Ref.
+    // This way we have access to the latest inside the event handler.
+    cassetteCodeRef.current = cassette?.contents?.code
+
+    // If the cassette and CodeMirror differ,
+    // set cassette on CodeMirror.
+    const cassetteCode = cassette?.contents?.code
+    if (cassetteCode !== codeMirrorRef.current.getValue()) {
+      console.log('codeMirror.setValue(cassette)')
+      codeMirrorRef.current.setValue(cassetteCode)
+    }
+  }, [cassette])
 
   return (
     <div className="Editor">
-      <div ref={codeMirrorDiv} />
+      <div ref={codeMirrorDivRef} />
     </div>
   )
 }

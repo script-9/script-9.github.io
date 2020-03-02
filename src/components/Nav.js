@@ -1,68 +1,37 @@
-import React, { useEffect, useState } from 'react'
-import { navigate } from '@reach/router'
+import React from 'react'
+import NavLink from './NavLink'
+import demoCode from './../utils/demoCode'
+// import GistFetcher from './GistFetcher'
+// import getIdFromLocation from './../utils/getIdFromLocation'
+
 // import * as idb from 'idb-keyval'
 // import uuid from './../utils/uuid'
-import NavLink from './NavLink'
-import network from './../utils/network'
-import isCassetteDirty from './../utils/isCassetteDirty'
+// import network from './../utils/network'
+// import usePrevious from './../utils/usePrevious'
+// import isCassetteDirty from './../utils/isCassetteDirty'
 
 const Nav = props => {
-  const { path, location, cassette, setCassette } = props
-  const [, setIsDirty] = useState(false)
+  const { cassette, setCassette } = props
+  // const { location, cassette, setCassette } = props
+  // const [, setIsDirty] = useState(false)
 
-  // If there is no cassette gist, and we have an id,
-  // fetch the gist, then set it on cassette.
-  // When should this run?
-  // - when the url changes from no id to id, but the cassette doesn't have
-  //   a gist already. In other words, when we create a new cassette,
-  //   then save.
-  //   Why only doing that when the cassette doesn't have a gist? Because if we
-  //   don't check for gist, when we hit save on a new cassette, and get a gist
-  //   id from GitHub, and put it in the URL, this will do another fetch.
-  //   NOTE: this is DONE.
-  useEffect(
-    () => {
-      const { search } = location
-      const params = new window.URLSearchParams(search)
-      const id = params.get('id')
-      if (!cassette?.gist && id) {
-        network
-          .fetchGist(id)
-          .then(gist => {
-            setCassette((cassette = {}) => ({
-              ...cassette,
-              gist,
-              contents: {
-                ...(cassette ? cassette.contents : {}),
-                code: gist.files['code.json'].content,
-              },
-            }))
-          })
-          .catch(error => {
-            console.log({ error })
-          })
-      }
-    },
-    [cassette, setCassette, location],
-  )
+  // useEffect(
+  //   () => {
+  //     if (cassette?.gist) {
+  //       navigate(`${path}?id=${cassette.gist.id}`)
+  //     } else {
+  //       navigate(`${path}`)
+  //     }
+  //   },
+  //   [cassette, path],
+  // )
 
-  useEffect(
-    () => {
-      if (cassette?.gist) {
-        navigate(`${path}?id=${cassette.gist.id}`)
-      } else {
-        navigate(`${path}`)
-      }
-    },
-    [cassette, path],
-  )
-
-  useEffect(
-    () => {
-      isCassetteDirty(cassette).then(setIsDirty)
-    },
-    [cassette],
-  )
+  // useEffect(
+  //   () => {
+  //     isCassetteDirty(cassette).then(setIsDirty)
+  //   },
+  //   [cassette],
+  // )
 
   // const handleNew = () => {
   //   setCassette(null)
@@ -103,8 +72,11 @@ const Nav = props => {
   // const isNew = !cassette || !(cassette.contents?.code)
   // const canSave = (!isNew && isDirty) || (!isNew && cassette.idbId)
 
+  // const gistId = getIdFromLocation(location)
+
   return (
     <nav>
+      {/* <GistFetcher gistId={gistId} setCassette={setCassette} /> */}
       <div className="pages">
         <ul>
           <li>
@@ -136,6 +108,20 @@ const Nav = props => {
             >
               Run
             </NavLink>
+          </li>
+          <li>
+            <button
+              onClick={() => {
+                setCassette((cassette = {}) => ({
+                  ...cassette,
+                  contents: {
+                    code: demoCode(),
+                  },
+                }))
+              }}
+            >
+              Load test code
+            </button>
           </li>
           {/* <li>
             <a href={`${process.env.REACT_APP_NOW}/api/oauth-authorize`}>

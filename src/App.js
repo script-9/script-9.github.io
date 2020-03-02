@@ -19,7 +19,7 @@ const App = () => {
   // Set cassette to demoCode for now.
   const [cassette, setCassette] = useState({
     contents: {
-      code: demoCode,
+      code: demoCode(),
     },
   })
 
