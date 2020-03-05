@@ -1,5 +1,5 @@
 const demoCode = () => `draw = () => {
-  clear()
+  clear(6)
   print(60, 62, '${Date.now()}', 0)
 }`
 

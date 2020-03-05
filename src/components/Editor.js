@@ -12,7 +12,7 @@ const Editor = props => {
 
   // The cassette prop, as a mutable Ref. This way we can access the latest
   // inside our CodeMirror.changes event.
-  const cassetteCodeRef = useRef(cassette)
+  const cassetteCodeRef = useRef(cassette?.contents?.code)
 
   // On mount, set CodeMirror on the DOM node.
   useEffect(() => {
