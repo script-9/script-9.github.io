@@ -1,13 +1,25 @@
 ## ROADMAP
 
-- Document existing code
-- On error, tell user where it happened
-  - eventually we should be able to click to go to error
-- If code forced a termination/init, let user know
-- enable keyboard shortcuts to cycle between tabs
-- add CODE 0-7
-- remember what CODE number you were on when you went away from CODE
+### P1
 
+- If code forced a termination/init, let user know.
+- Add game loop.
+- Add pause/restart buttons.
+
+### P2
+
+- Add webxr mode.
+
+### P3
+
+- Add time-travel slider.
+- Enable saving to gist.
+- Enable saving locally.
+- Enable keyboard shortcuts to cycle between tabs.
+- On error, tell user where it happened.
+  - Eventually we should be able to click to go to error.
+- Add CODE 0-7.
+- Remember what CODE number you were on when you went away from CODE.
 
 ## DEPLOY
 
