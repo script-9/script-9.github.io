@@ -2,7 +2,6 @@
 
 ### P1
 
-- If code forced a termination/init, let user know.
 - Add game loop.
 - Add pause/restart buttons.
 
