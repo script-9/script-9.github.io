@@ -15,6 +15,7 @@ const Output = props => {
 
   const [frameDuration, setFrameDuration] = useState(null)
   const [codeError, setCodeError] = useState(null)
+  const [codeTimedOut, setCodeTimedOut] = useState(false)
 
   const initWorker = () => {
     console.log('Initializing web worker.')
@@ -61,44 +62,60 @@ const Output = props => {
   }, [])
 
   // When the cassette code changes,
-  useEffect(() => {
-    const code = cassette?.contents?.code
-    // If we have a webworker, code, and no lint errors,
-    // we are ready to send code to the worker.
-    if (workerRef.current && code && !getLintErrors(code).length) {
-      // Send over a unique id, and save it in sentId.
-      // This means this unique id will always be associated with the
-      // most recent code we sent over.
-      sentIdRef.current = Date.now()
-      workerRef.current.postMessage([code, sentIdRef.current])
+  useEffect(
+    () => {
+      const code = cassette?.contents?.code
+      // If we have a webworker, code, and no lint errors,
+      // we are ready to send code to the worker.
+      if (workerRef.current && code && !getLintErrors(code).length) {
+        // Send over a unique id, and save it in sentId.
+        // This means this unique id will always be associated with the
+        // most recent code we sent over.
+        sentIdRef.current = Date.now()
+        workerRef.current.postMessage([code, sentIdRef.current])
 
-      // Now for the timer logic.
-      // First: if we have a timer already, cancel it.
-      if (setTimeoutIdRef.current) {
-        clearInterval(setTimeoutIdRef.current)
-      }
-
-      // Create the timer.
-      // One second after we sent the frame, check:
-      // is sentId in receivedIds? If so, all good. Cleanup/etc.
-      // If not, terminate, restart, and let user know.
-      setTimeoutIdRef.current = setTimeout(() => {
-        if (receivedIdsRef.current.includes(sentIdRef.current)) {
-          receivedIdsRef.current = []
-        } else {
-          workerRef.current.terminate()
-          console.log('TERMINATE web worker')
-          initWorker()
+        // Now for the timer logic.
+        // First: if we have a timer already, cancel it.
+        if (setTimeoutIdRef.current) {
+          clearInterval(setTimeoutIdRef.current)
         }
-      }, 1000)
-    }
-  }, [cassette])
+
+        // Create the timer.
+        // One second after we sent the frame, check:
+        // is sentId in receivedIds? If so, all good. Cleanup/etc.
+        // If not, terminate, restart, and let user know:
+        // print a message in brightest color,
+        // and clear it the next time we get a 'draw'/'error' payload.
+        setTimeoutIdRef.current = setTimeout(() => {
+          if (receivedIdsRef.current.includes(sentIdRef.current)) {
+            receivedIdsRef.current = []
+            setCodeTimedOut(false)
+          } else {
+            workerRef.current.terminate()
+            console.log('TERMINATE web worker')
+            setCodeTimedOut(true)
+            initWorker()
+          }
+        }, 1000)
+      }
+    },
+    [cassette],
+  )
 
   return (
     <div className="Output">
       <Canvas ref={canvasRef} />
-      <div>1 frame takes {frameDuration}ms</div>
-      {codeError?.message && <div>{codeError.message}</div>}
+      <div className="messages">
+        <div className="log">1 frame takes {frameDuration}ms</div>
+        {codeError?.message && (
+          <div className="error">Error: {codeError.message}</div>
+        )}
+        {codeTimedOut && (
+          <div className="error">
+            Error: code is taking too long. Check for infinite loops.
+          </div>
+        )}
+      </div>
     </div>
   )
 }
