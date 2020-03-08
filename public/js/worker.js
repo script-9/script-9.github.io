@@ -2,6 +2,7 @@
 /* eslint no-new-func: 0 */
 // /* eslint no-restricted-globals: 0 */
 
+this.importScripts('./lib/d3-timer.min.js')
 this.importScripts('./makePixelData.js')
 this.importScripts('./colors.js')
 this.importScripts('./canvasApi/alphabet.js')
@@ -29,10 +30,27 @@ for (const func in canvasApi) {
 
 const noop = () => {}
 
+let interval
+
+const callback = elapsed => {
+  try {
+    this.update(this.script8State)
+    this.draw(this.script8State)
+    postMessage(['draw', this.payloadId, pixelData.pixelBytes, elapsed])
+  } catch (error) {
+    console.log('got error in worker catch')
+    interval.stop()
+    interval = null
+    postMessage(['error', this.payloadId, error])
+  }
+}
+
 onmessage = function(e) {
-  const [userCode, startDate] = e.data
+  const [userCode, payloadId] = e.data
 
   try {
+    this.payloadId = payloadId
+
     this.init = noop
     this.update = noop
     this.draw = noop
@@ -41,16 +59,20 @@ onmessage = function(e) {
     func()
 
     // Create the script8 state.
-    const state = {}
+    this.script8State = {}
 
-    // Now that we have init/update/draw on the worker scope,
-    // we can call them.
-    this.init(state)
-    this.update(state)
-    this.draw(state)
+    // Initialize.
+    this.init(this.script8State)
 
-    postMessage(['draw', startDate, pixelData.pixelBytes])
+    if (!interval) {
+      console.log('calling interval callback')
+      // eslint-disable-next-line no-undef
+      interval = d3.interval(callback, 1000)
+    }
   } catch (error) {
-    postMessage(['error', startDate, error])
+    console.log('got error in worker catch')
+    interval.stop()
+    interval = null
+    postMessage(['error', payloadId, error])
   }
 }

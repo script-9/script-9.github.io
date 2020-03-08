@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
+import { timeout } from 'd3-timer'
 import Canvas from './Canvas'
 import getLintErrors from './../utils/getLintErrors'
 import getErrorLocation from './../utils/getErrorLocation'
@@ -9,24 +10,26 @@ const Output = props => {
   const canvasRef = useRef()
   const workerRef = useRef()
   const pixelBytesRef = useRef()
-  const sentIdRef = useRef()
-  const receivedIdsRef = useRef([])
-  const setTimeoutIdRef = useRef()
+  const payloadIdSendRef = useRef()
+  const payloadIdsReceivedRef = useRef([])
+  const timeoutRef = useRef()
 
   const [frameDuration, setFrameDuration] = useState(null)
   const [codeError, setCodeError] = useState(null)
-  const [codeTimedOut, setCodeTimedOut] = useState(false)
+  const [isCodeTimedOut, setIsCodeTimedOut] = useState(false)
 
   const initWorker = () => {
     console.log('Initializing web worker.')
     workerRef.current = new Worker('js/worker.js')
     workerRef.current.onmessage = e => {
-      const [messageType, receivedId, payload] = e.data
+      const [messageType, payloadId, payload, elapsed] = e.data
 
-      // The webworker returned receivedId (which we sent originally).
-      // Store receivedId in receivedIdsRef.
-      receivedIdsRef.current.push(receivedId)
-      setFrameDuration(Date.now() - receivedId)
+      console.log(elapsed)
+
+      // The webworker returned payloadId (which we sent originally).
+      // Store payloadId in payloadIdsReceivedRef.
+      payloadIdsReceivedRef.current.push(payloadId)
+      setFrameDuration(Date.now() - payloadId)
 
       switch (messageType) {
         // If message is 'draw',
@@ -68,16 +71,16 @@ const Output = props => {
       // If we have a webworker, code, and no lint errors,
       // we are ready to send code to the worker.
       if (workerRef.current && code && !getLintErrors(code).length) {
-        // Send over a unique id, and save it in sentId.
+        // Send over a unique id, and save it in payloadIdSendRef.
         // This means this unique id will always be associated with the
         // most recent code we sent over.
-        sentIdRef.current = Date.now()
-        workerRef.current.postMessage([code, sentIdRef.current])
+        payloadIdSendRef.current = Date.now()
+        workerRef.current.postMessage([code, payloadIdSendRef.current])
 
         // Now for the timer logic.
         // First: if we have a timer already, cancel it.
-        if (setTimeoutIdRef.current) {
-          clearInterval(setTimeoutIdRef.current)
+        if (timeoutRef.current) {
+          timeoutRef.current.stop()
         }
 
         // Create the timer.
@@ -86,17 +89,21 @@ const Output = props => {
         // If not, terminate, restart, and let user know:
         // print a message in brightest color,
         // and clear it the next time we get a 'draw'/'error' payload.
-        setTimeoutIdRef.current = setTimeout(() => {
-          if (receivedIdsRef.current.includes(sentIdRef.current)) {
-            receivedIdsRef.current = []
-            setCodeTimedOut(false)
+        timeoutRef.current = timeout(() => {
+          if (
+            payloadIdsReceivedRef.current.includes(payloadIdSendRef.current)
+          ) {
+            payloadIdsReceivedRef.current = []
+            setIsCodeTimedOut(false)
           } else {
             workerRef.current.terminate()
             console.log('TERMINATE web worker')
-            setCodeTimedOut(true)
+            setIsCodeTimedOut(true)
             initWorker()
           }
-        }, 1000)
+          // TODO: can we use 2000 on the first time, then 1000 afterwards?
+          // The first time is pretty slow.
+        }, 2000)
       }
     },
     [cassette],
@@ -110,7 +117,7 @@ const Output = props => {
         {codeError?.message && (
           <div className="error">Error: {codeError.message}</div>
         )}
-        {codeTimedOut && (
+        {isCodeTimedOut && (
           <div className="error">
             Error: code is taking too long. Check for infinite loops.
           </div>
