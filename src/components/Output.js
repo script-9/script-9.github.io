@@ -44,7 +44,7 @@ const Output = props => {
     }
 
     // Initialize the worker.
-    workerRef.current = new Worker('js/worker.js')
+    workerRef.current = new Worker(`${window.location.origin}/js/worker.js`)
 
     // Handle getting messages from the worker.
     workerRef.current.onmessage = e => {

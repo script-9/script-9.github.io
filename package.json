@@ -53,5 +53,9 @@
       "last 1 safari version"
     ]
   },
-  "reactSnap": {}
+  "reactSnap": {
+    "puppeteerArgs": [
+      "--disable-web-security"
+    ]
+  }
 }
