@@ -1,7 +1,7 @@
 /* eslint no-eval: 0 */
 /* eslint no-new-func: 0 */
-// /* eslint no-restricted-globals: 0 */
 
+this.importScripts('./lib/d3-timer.min.js')
 this.importScripts('./makePixelData.js')
 this.importScripts('./colors.js')
 this.importScripts('./canvasApi/alphabet.js')
@@ -12,25 +12,46 @@ this.importScripts('./canvasApi/print.js')
 this.importScripts('./canvasApi/rect.js')
 this.importScripts('./canvasApi/index.js')
 
+// Helper function - eventually this will go away.
 this.getRandomInt = max => Math.floor(Math.random() * Math.floor(max))
 
+const log = false ? console.log : () => {}
+
+// Setup the ArrayBuffer.
 const pixelData = this.makePixelData()
 const pixels = pixelData.pixels
 
+// Create the canvas API,
 const canvasApi = this.createCanvasApi({
   pixels,
   width: 128,
   height: 128,
 })
 
+// and expose all its methods to worker scope.
 for (const func in canvasApi) {
   this[func] = canvasApi[func]
 }
 
 const noop = () => {}
 
+let interval
+
+const callback = () => {
+  try {
+    this.update(this.script8State)
+    this.draw(this.script8State)
+    postMessage(['draw', pixelData.pixelBytes])
+  } catch (error) {
+    log('worker: callback threw error. Stopping interval.')
+    interval.stop()
+    interval = null
+    postMessage(['error', error])
+  }
+}
+
 onmessage = function(e) {
-  const [userCode, startDate] = e.data
+  const userCode = e.data
 
   try {
     this.init = noop
@@ -41,16 +62,19 @@ onmessage = function(e) {
     func()
 
     // Create the script8 state.
-    const state = {}
+    this.script8State = {}
 
-    // Now that we have init/update/draw on the worker scope,
-    // we can call them.
-    this.init(state)
-    this.update(state)
-    this.draw(state)
+    // Initialize.
+    this.init(this.script8State)
 
-    postMessage(['draw', startDate, pixelData.pixelBytes])
+    if (!interval) {
+      log('worker: Starting interval.')
+      interval = this.d3.interval(callback, 1000 / 60)
+    }
   } catch (error) {
-    postMessage(['error', startDate, error])
+    log('worker: onmessage threw error.')
+    interval.stop()
+    interval = null
+    postMessage(['error', error])
   }
 }

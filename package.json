@@ -8,6 +8,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "acorn": "^7.1.0",
+    "d3-timer": "^1.0.10",
     "detect-browser": "^4.8.0",
     "gh-pages": "^2.2.0",
     "idb": "^5.0.1",
