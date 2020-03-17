@@ -1,8 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react'
-import { timeout } from 'd3-timer'
+import React, { useRef, useEffect, useState, useCallback } from 'react'
+import { interval } from 'd3-timer'
 import Canvas from './Canvas'
 import getLintErrors from './../utils/getLintErrors'
 import getErrorLocation from './../utils/getErrorLocation'
+
+const log = false ? console.log : () => {}
 
 /*
 Output tells the worker to initialize.
@@ -13,24 +15,8 @@ This will continue forever.
 If there is an error the worker will send that along as well.
 What happens if the worker freezes? Back in Output, every time we get a
 message back, we write down when we got it. And every 1s, we check:
-has it been more than 1second since we got a postMessage?
+has it been more than 1 second since we got a postMessage?
 If yes, then we terminate the worker and start over.
-Question:what to do 
-
-*/
-
-/*
-The way this should work:
-- The worker is initialized, and it starts the timer.
-  - This means every 16.6ms,
-    the worker will run update + draw,
-    then send the arraybuffer back via postMessage.
-
-- If the worker takes too long we want to terminate+initialize.
-  The tricky bit: how do we determine if the worker is frozen?
-
-
-
 */
 
 const Output = props => {
@@ -39,41 +25,81 @@ const Output = props => {
   const canvasRef = useRef()
   const workerRef = useRef()
   const pixelBytesRef = useRef()
-  const payloadIdSendRef = useRef()
-  const payloadIdsReceivedRef = useRef([])
-  const timeoutRef = useRef()
-
-  const [frameDuration, setFrameDuration] = useState(null)
+  const intervalRef = useRef()
+  const messageReceivedDateRef = useRef()
   const [codeError, setCodeError] = useState(null)
   const [isCodeTimedOut, setIsCodeTimedOut] = useState(false)
+  // const [frameDuration, setFrameDuration] = useState(null)
 
-  const initWorker = () => {
-    console.log('Initializing web worker.')
+  // This function initializes the web worker. It's run on mount,
+  // and every time we restart the worker.
+  const initWorker = useCallback(() => {
+    console.log('Output: Initializing web worker.')
+
+    // If we already have an interval, stop it.
+    if (intervalRef.current) {
+      log('Output: intervalRef exists. Stopping interval.')
+      intervalRef.current.stop()
+      intervalRef.current = null
+    }
+
+    // Initialize the worker.
     workerRef.current = new Worker('js/worker.js')
+
+    // Handle getting messages from the worker.
     workerRef.current.onmessage = e => {
-      const [messageType, payloadId, payload, elapsed] = e.data
+      // Store the timestamp when we got the message.
+      // We'll use this later to see how long it's been
+      // since we last got a message from the worker.
+      messageReceivedDateRef.current = Date.now()
 
-      console.log(elapsed)
+      // Get the data from the worker (thank you worker!)
+      const [messageType, payload] = e.data
 
-      // The webworker returned payloadId (which we sent originally).
-      // Store payloadId in payloadIdsReceivedRef.
-      payloadIdsReceivedRef.current.push(payloadId)
-      setFrameDuration(Date.now() - payloadId)
+      // If the timer doesn't exist, create it.
+      if (!intervalRef.current) {
+        // Every 2 seconds, check: when was the last time
+        // we got a message back from the worker?
+        // Has it been too long?
+        // If so, terminate the worker and initialize it again.
+        log('Output: interval does not exist. Creating interval.')
+        intervalRef.current = interval(() => {
+          if (Date.now() - messageReceivedDateRef.current > 1000) {
+            log('Output: worker is taking too long.')
+            log('Output: restarting web worker.')
+            workerRef.current.terminate()
+            setIsCodeTimedOut(true)
+            initWorker()
+          } else {
+            setIsCodeTimedOut(false)
+          }
+        }, 500)
+      }
 
       switch (messageType) {
         // If message is 'draw',
         // store ArrayBuffer in pixelBytesRef,
         // and draw it.
         case 'draw': {
-          console.log('Received message: draw')
+          log('Output: Received message `draw`.')
           pixelBytesRef.current = payload
           canvasRef.current.draw(pixelBytesRef.current)
           setCodeError(null)
           break
         }
+
         // If message is 'error',
         // let user know.
+        // Also stop the interval timer. Otherwise we will
+        // think it's been too long, and then
+        // we'll incorrectly restart the worker.
         case 'error': {
+          log('Output: Received message `error`.')
+
+          log('Output: Stopping interval.')
+          intervalRef.current.stop()
+          intervalRef.current = null
+
           const location = getErrorLocation(payload)
           setCodeError({
             message: payload.message,
@@ -81,17 +107,18 @@ const Output = props => {
           })
           break
         }
+
         default: {
         }
       }
     }
-  }
+  }, [])
 
   // On load,
   // create the worker.
   useEffect(() => {
     initWorker()
-  }, [])
+  }, [initWorker])
 
   // When the cassette code changes,
   useEffect(() => {
@@ -99,45 +126,35 @@ const Output = props => {
     // If we have a webworker, code, and no lint errors,
     // we are ready to send code to the worker.
     if (workerRef.current && code && !getLintErrors(code).length) {
-      // Send over a unique id, and save it in payloadIdSendRef.
-      // This means this unique id will always be associated with the
-      // most recent code we sent over.
-      payloadIdSendRef.current = Date.now()
-      workerRef.current.postMessage([code, payloadIdSendRef.current])
-
-      // Now for the timer logic.
-      // First: if we have a timer already, cancel it.
-      if (timeoutRef.current) {
-        timeoutRef.current.stop()
+      // If the timer doesn't exist, create it.
+      if (!intervalRef.current) {
+        // Every 2 seconds, check: when was the last time
+        // we got a message back from the worker?
+        // Has it been too long?
+        // If so, terminate the worker and initialize it again.
+        log('Output: interval does not exist. Creating interval.')
+        intervalRef.current = interval(() => {
+          if (Date.now() - messageReceivedDateRef.current > 1000) {
+            log('Output: worker is taking too long.')
+            log('Output: restarting web worker.')
+            workerRef.current.terminate()
+            setIsCodeTimedOut(true)
+            initWorker()
+          } else {
+            setIsCodeTimedOut(false)
+          }
+        }, 500)
       }
 
-      // Create the timer.
-      // One second after we sent the frame, check:
-      // is sentId in receivedIds? If so, all good. Cleanup/etc.
-      // If not, terminate, restart, and let user know:
-      // print a message in brightest color,
-      // and clear it the next time we get a 'draw'/'error' payload.
-      timeoutRef.current = timeout(() => {
-        if (payloadIdsReceivedRef.current.includes(payloadIdSendRef.current)) {
-          payloadIdsReceivedRef.current = []
-          setIsCodeTimedOut(false)
-        } else {
-          workerRef.current.terminate()
-          console.log('TERMINATE web worker')
-          setIsCodeTimedOut(true)
-          initWorker()
-        }
-        // TODO: can we use 2000 on the first time, then 1000 afterwards?
-        // The first time is pretty slow.
-      }, 2000)
+      workerRef.current.postMessage(code)
     }
-  }, [cassette])
+  }, [cassette, initWorker])
 
   return (
     <div className="Output">
       <Canvas ref={canvasRef} />
       <div className="messages">
-        <div className="log">1 frame takes {frameDuration}ms</div>
+        {/* <div className="log">1 frame takes {frameDuration}ms</div> */}
         {codeError?.message && (
           <div className="error">Error: {codeError.message}</div>
         )}
@@ -152,3 +169,14 @@ const Output = props => {
 }
 
 export default Output
+// const intervalCallback = useCallback(() => {
+//   if (Date.now() - messageReceivedDateRef.current > 1000) {
+//     log('Output: worker is taking too long.')
+//     log('Output: restarting web worker.')
+//     workerRef.current.terminate()
+//     setIsCodeTimedOut(true)
+//     initWorker()
+//   } else {
+//     setIsCodeTimedOut(false)
+//   }
+// }, [initWorker])

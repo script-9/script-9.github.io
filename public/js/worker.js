@@ -1,6 +1,5 @@
 /* eslint no-eval: 0 */
 /* eslint no-new-func: 0 */
-// /* eslint no-restricted-globals: 0 */
 
 this.importScripts('./lib/d3-timer.min.js')
 this.importScripts('./makePixelData.js')
@@ -13,17 +12,23 @@ this.importScripts('./canvasApi/print.js')
 this.importScripts('./canvasApi/rect.js')
 this.importScripts('./canvasApi/index.js')
 
+// Helper function - eventually this will go away.
 this.getRandomInt = max => Math.floor(Math.random() * Math.floor(max))
 
+const log = false ? console.log : () => {}
+
+// Setup the ArrayBuffer.
 const pixelData = this.makePixelData()
 const pixels = pixelData.pixels
 
+// Create the canvas API,
 const canvasApi = this.createCanvasApi({
   pixels,
   width: 128,
   height: 128,
 })
 
+// and expose all its methods to worker scope.
 for (const func in canvasApi) {
   this[func] = canvasApi[func]
 }
@@ -32,25 +37,23 @@ const noop = () => {}
 
 let interval
 
-const callback = elapsed => {
+const callback = () => {
   try {
     this.update(this.script8State)
     this.draw(this.script8State)
-    postMessage(['draw', this.payloadId, pixelData.pixelBytes, elapsed])
+    postMessage(['draw', pixelData.pixelBytes])
   } catch (error) {
-    console.log('got error in worker catch')
+    log('worker: callback threw error. Stopping interval.')
     interval.stop()
     interval = null
-    postMessage(['error', this.payloadId, error])
+    postMessage(['error', error])
   }
 }
 
 onmessage = function(e) {
-  const [userCode, payloadId] = e.data
+  const userCode = e.data
 
   try {
-    this.payloadId = payloadId
-
     this.init = noop
     this.update = noop
     this.draw = noop
@@ -65,14 +68,13 @@ onmessage = function(e) {
     this.init(this.script8State)
 
     if (!interval) {
-      console.log('calling interval callback')
-      // eslint-disable-next-line no-undef
-      interval = d3.interval(callback, 1000)
+      log('worker: Starting interval.')
+      interval = this.d3.interval(callback, 1000 / 60)
     }
   } catch (error) {
-    console.log('got error in worker catch')
+    log('worker: onmessage threw error.')
     interval.stop()
     interval = null
-    postMessage(['error', payloadId, error])
+    postMessage(['error', error])
   }
 }

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import getLintErrors from './../utils/getLintErrors'
 
+const log = false ? console.log : () => {}
+
 const Editor = props => {
   const { cassette, setCassette } = props
 
@@ -33,7 +35,7 @@ const Editor = props => {
       const cmValue = cm.getValue()
       if (cmValue !== cassetteCodeRef.current) {
         // call setCassette with CodeMirror.
-        console.log('setCassette(codeMirror)')
+        log('setCassette(codeMirror)')
         setCassette((cassette = {}) => ({
           ...cassette,
           contents: {
@@ -54,7 +56,7 @@ const Editor = props => {
     // set cassette on CodeMirror.
     const cassetteCode = cassette?.contents?.code
     if (cassetteCode !== codeMirrorRef.current.getValue()) {
-      console.log('codeMirror.setValue(cassette)')
+      log('codeMirror.setValue(cassette)')
       codeMirrorRef.current.setValue(cassetteCode)
     }
   }, [cassette])
